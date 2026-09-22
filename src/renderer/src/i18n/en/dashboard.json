@@ -47,6 +47,11 @@
     }
   },
   "cleanupCta": "How do I delete this?",
+  "confessional": {
+    "title": "Confessional mode",
+    "description": "The impact engine infers patterns from your data: places, sensitive lexicon, spikes and correlations. No AI, no internet.",
+    "cta": "Enter"
+  },
   "reset": "Delete my data from this app",
   "resetConfirm": "This removes the dossier saved on this computer. It deletes nothing at Google. Continue?"
 }

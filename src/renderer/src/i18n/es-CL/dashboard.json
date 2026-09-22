@@ -47,6 +47,11 @@
     }
   },
   "cleanupCta": "¿Cómo borro esto?",
+  "confessional": {
+    "title": "Modo confesionario",
+    "description": "El motor de impacto infiere patrones de tus datos: lugares, léxico sensible, picos y correlaciones. Sin IA, sin internet.",
+    "cta": "Entrar"
+  },
   "reset": "Borrar mis datos de esta app",
   "resetConfirm": "Esto elimina el expediente guardado en este computador. No borra nada en Google. ¿Continuar?"
 }

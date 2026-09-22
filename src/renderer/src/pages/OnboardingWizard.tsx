@@ -1,11 +1,20 @@
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppStore } from '../state/store'
+import { detectTimezone } from '../../../impact/time'
 
 export default function OnboardingWizard(): React.JSX.Element {
   const { t } = useTranslation(['onboarding', 'common'])
   const phase = useAppStore((s) => s.phase)
   const snapshot = useAppStore((s) => s.snapshot)
   const setPhase = useAppStore((s) => s.setPhase)
+  const timezone = useAppStore((s) => s.timezone)
+  const setTimezone = useAppStore((s) => s.setTimezone)
+  const [tzDraft, setTzDraft] = useState(timezone)
+
+  useEffect(() => {
+    setTzDraft(timezone || detectTimezone())
+  }, [timezone])
 
   if (phase === 'guide') {
     const steps = t('onboarding:googleGuide.steps', { returnObjects: true }) as unknown as string[]
@@ -33,6 +42,33 @@ export default function OnboardingWizard(): React.JSX.Element {
     <div>
       <h1>{t('onboarding:welcome.title')}</h1>
       <p className="lead">{t('onboarding:welcome.subtitle')}</p>
+
+      <div className="section-card tz-step">
+        <label className="tz-label" htmlFor="tz-input">
+          {t('onboarding:timezone.label')}
+        </label>
+        <p className="note">{t('onboarding:timezone.hint')}</p>
+        <input
+          id="tz-input"
+          className="tz-input"
+          value={tzDraft}
+          onChange={(e) => setTzDraft(e.target.value)}
+          onBlur={() => void setTimezone(tzDraft.trim() || detectTimezone())}
+          placeholder="America/Santiago"
+          spellCheck={false}
+        />
+        <button
+          className="secondary"
+          onClick={() => {
+            const detected = detectTimezone()
+            setTzDraft(detected)
+            void setTimezone(detected)
+          }}
+        >
+          {t('onboarding:timezone.detect')}
+        </button>
+      </div>
+
       <div className="path-choice">
         <button onClick={() => setPhase('guide')}>
           {t('onboarding:welcome.google')}

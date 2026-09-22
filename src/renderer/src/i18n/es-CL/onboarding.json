@@ -8,6 +8,11 @@
     "metaSoon": "Disponible en la próxima versión",
     "hasSnapshot": "Continuar donde quedé"
   },
+  "timezone": {
+    "label": "Tu zona horaria",
+    "hint": "Se usa solo en tu computador para interpretar tus horarios (noches, jornadas laborales). Puedes cambiarla cuando quieras.",
+    "detect": "Detectar automáticamente"
+  },
   "googleGuide": {
     "title": "Primero: descarga tus datos de Google",
     "intro": "Google llama a esto \"Takeout\": un archivo .zip con tu actividad. Te guiamos paso a paso.",

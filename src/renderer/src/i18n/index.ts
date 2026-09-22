@@ -6,12 +6,14 @@ import onboardingEs from './es-CL/onboarding.json'
 import dashboardEs from './es-CL/dashboard.json'
 import cleanupEs from './es-CL/cleanup.json'
 import disclaimersEs from './es-CL/disclaimers.json'
+import confessionalEs from './es-CL/confessional.json'
 
 import commonEn from './en/common.json'
 import onboardingEn from './en/onboarding.json'
 import dashboardEn from './en/dashboard.json'
 import cleanupEn from './en/cleanup.json'
 import disclaimersEn from './en/disclaimers.json'
+import confessionalEn from './en/confessional.json'
 
 export const SUPPORTED_LOCALES = ['es-CL', 'en'] as const
 export type Locale = (typeof SUPPORTED_LOCALES)[number]
@@ -23,14 +25,16 @@ void i18n.use(initReactI18next).init({
       onboarding: onboardingEs,
       dashboard: dashboardEs,
       cleanup: cleanupEs,
-      disclaimers: disclaimersEs
+      disclaimers: disclaimersEs,
+      confessional: confessionalEs
     },
     en: {
       common: commonEn,
       onboarding: onboardingEn,
       dashboard: dashboardEn,
       cleanup: cleanupEn,
-      disclaimers: disclaimersEn
+      disclaimers: disclaimersEn,
+      confessional: confessionalEn
     }
   },
   lng: 'es-CL',

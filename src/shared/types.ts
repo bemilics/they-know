@@ -57,7 +57,12 @@ export interface ChecklistItemState {
 
 export type ChecklistState = Record<string, ChecklistItemState>
 
+export interface AppSettings {
+  timezone: string
+}
+
 export interface StoredData {
   snapshot: DossierSnapshot | null
   checklist: ChecklistState
+  settings: AppSettings
 }

@@ -1,0 +1,123 @@
+{
+  "intro": {
+    "title": "Modo confesionario",
+    "subtitle": "El motor de impacto revisó tus datos en este computador. Nada se envió a ningún lado.",
+    "start": "Empezar",
+    "analyzing": "Analizando tus datos…",
+    "analyzingStage": "Paso: {{stage}}",
+    "error": "Algo salió mal al analizar. Intenta de nuevo.",
+    "retry": "Reintentar",
+    "empty": "Aún no hay suficientes datos para el motor de impacto."
+  },
+  "progress": {
+    "init": "preparando",
+    "places": "lugares",
+    "lexicon": "léxico",
+    "spikes": "picos",
+    "correlations": "correlaciones",
+    "cards": "cartas",
+    "done": "listo"
+  },
+  "card": {
+    "step": "Paso {{current}} de {{total}}",
+    "next": "Siguiente",
+    "reveal": "Mostrar",
+    "finish": "Terminar",
+    "close": "Cerrar",
+    "endTitle": "Fin del confesionario",
+    "endSubtitle": "Esto es lo que tus propios datos dejan entrever. Puedes borrarlo cuando quieras.",
+    "backToDossier": "Volver a mi expediente",
+    "levels": {
+      "hecho": "Hecho",
+      "inferencia": "Inferencia",
+      "implicancia": "Implicancia"
+    },
+    "confidence": {
+      "alta": "confianza alta",
+      "media": "confianza media",
+      "baja": "confianza baja"
+    },
+    "evidence": "Evidencia",
+    "nCards": "{{count}} cartas"
+  },
+  "places": {
+    "casa": {
+      "titulo": "Tu casa se repite",
+      "detalle": "Pasaste {{noches}} noches en el mismo lugar según tu historial de ubicaciones."
+    },
+    "trabajo": {
+      "titulo": "Tu trabajo rastreado",
+      "detalle": "Hay un segundo lugar con {{dias_laborales}} jornadas largas en días laborables."
+    },
+    "secundario": {
+      "titulo": "Otra dirección frecuente",
+      "detalle": "Otro lugar aparece {{noches}} noches: ¿casa de alguien?"
+    }
+  },
+  "streak": {
+    "titulo": "Racha de presencia",
+    "detalle": "Tu ubicación quedó registrada {{dias}} días seguidos sin saltarte ninguno."
+  },
+  "coverage": {
+    "titulo": "Te dormías (o no) con el rastreo encendido",
+    "detalle": "{{porcentaje}}% de los días tienen actividad entre las 2 y las 4 AM."
+  },
+  "lexicon": {
+    "salud": {
+      "titulo": "Buscaste ayuda para tu salud mental",
+      "detalle": "{{cantidad}} búsquedas relacionadas con terapia, ansiedad o medicación."
+    },
+    "dinero": {
+      "titulo": "El dinero te trae de cabeza",
+      "detalle": "{{cantidad}} búsquedas sobre deudas, créditos o finanzas."
+    },
+    "legal": {
+      "titulo": "Asuntos legales en el radar",
+      "detalle": "{{cantidad}} búsquedas con términos legales o judiciales."
+    },
+    "relaciones": {
+      "titulo": "Trazas el mapa de alguien más",
+      "detalle": "{{cantidad}} búsquedas que huelen a citas o a terceras personas."
+    },
+    "salud_fisica": {
+      "titulo": "Preocupación por tu cuerpo",
+      "detalle": "{{cantidad}} búsquedas médicas o de tratamientos."
+    },
+    "adicciones": {
+      "titulo": "Hablaste de consumo o recuperación",
+      "detalle": "{{cantidad}} búsquedas vinculadas a sustancias o sobriedad."
+    },
+    "trabajo": {
+      "titulo": "El trabajo no te deja en paz",
+      "detalle": "{{cantidad}} búsquedas de empleo, despidos o jubilación."
+    }
+  },
+  "spikes": {
+    "trabajo": {
+      "titulo": "Pico de búsquedas laborales",
+      "detalle": "En la semana {{semana}} buscaste empleo {{cantidad}} veces (z={{z}})."
+    },
+    "salud": {
+      "titulo": "Pico de búsquedas de salud",
+      "detalle": "En la semana {{semana}} el tema médico se disparó: {{cantidad}} búsquedas."
+    },
+    "viajes": {
+      "titulo": "Pico de viajes",
+      "detalle": "En la semana {{semana}} volaste a planear {{cantidad}} veces."
+    },
+    "compras": {
+      "titulo": "Pico de compras",
+      "detalle": "En la semana {{semana}} miraste precios {{cantidad}} veces."
+    }
+  },
+  "correlation": {
+    "titulo": "Buscaste algo justo donde estabas",
+    "detalle": "\"{{busqueda}}\" apareció {{ocurrencias}} veces junto a tu ubicación (±{{delta_minutos}} min).",
+    "nivel_implicancia": "No es un hecho: es una coincidencia recurrente."
+  },
+  "levels": {
+    "hecho": "Hecho: los datos lo dicen.",
+    "inferencia": "Inferencia: el patrón lo sugiere.",
+    "implicancia": "Implicancia: correlación, no causalidad."
+  }
+}

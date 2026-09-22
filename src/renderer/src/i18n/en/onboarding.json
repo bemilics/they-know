@@ -8,6 +8,11 @@
     "metaSoon": "Coming in the next version",
     "hasSnapshot": "Continue where I left off"
   },
+  "timezone": {
+    "label": "Your timezone",
+    "hint": "Used only on this computer to interpret your hours (nights, workdays). You can change it anytime.",
+    "detect": "Detect automatically"
+  },
   "googleGuide": {
     "title": "First: download your data from Google",
     "intro": "Google calls this \"Takeout\": a .zip file with your activity. We'll guide you step by step.",

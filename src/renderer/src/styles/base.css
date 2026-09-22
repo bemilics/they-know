@@ -446,3 +446,205 @@ ol.steps li {
   padding-top: 20px;
   border-top: 1px solid var(--bg-soft);
 }
+
+.tz-step {
+  margin: 20px 0;
+}
+
+.tz-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.tz-input {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  background: var(--bg-soft);
+  border: 1px solid var(--bg-soft);
+  border-radius: 10px;
+  color: var(--ink);
+  padding: 10px 14px;
+  font-size: 15px;
+  margin: 10px 0;
+  font-family: ui-monospace, monospace;
+}
+
+.tz-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.confessional {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.confessional-loading h1,
+.confessional-end h1 {
+  margin-bottom: 8px;
+}
+
+.confessional-progress-track {
+  background: var(--bg-soft);
+  border-radius: 999px;
+  height: 6px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.confessional-progress-fill {
+  background: var(--accent);
+  height: 100%;
+  transition: width 0.35s ease;
+}
+
+.card-stage {
+  background: var(--bg-elevated);
+  border: 1px solid var(--bg-soft);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  min-height: 280px;
+}
+
+.card-stage-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.card-stage-progress {
+  font-size: 13px;
+  color: var(--ink-dim);
+  letter-spacing: 0.5px;
+}
+
+.epistemic-badge {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.epistemic-hecho {
+  background: rgba(156, 204, 142, 0.15);
+  color: var(--ok);
+}
+
+.epistemic-inferencia {
+  background: rgba(232, 168, 124, 0.15);
+  color: var(--accent);
+}
+
+.epistemic-implicancia {
+  background: rgba(168, 159, 181, 0.15);
+  color: var(--ink-dim);
+}
+
+.card-stage-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  margin: 0 0 14px;
+  animation: card-in 0.4s ease;
+}
+
+.card-stage-blur {
+  font-size: 32px;
+  letter-spacing: 6px;
+  color: var(--ink-dim);
+  filter: blur(4px);
+  user-select: none;
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+}
+
+.card-stage-detail {
+  color: var(--ink);
+  font-size: 17px;
+  max-width: 52ch;
+  animation: card-in 0.45s ease;
+}
+
+.card-stage-meta {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.conf-badge {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--bg-soft);
+  color: var(--ink-dim);
+}
+
+.conf-alta {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+.conf-media {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.card-evidence {
+  width: 100%;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+.card-evidence summary {
+  cursor: pointer;
+}
+
+.card-evidence ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.card-stage-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 26px;
+  flex-wrap: wrap;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-stage-title,
+  .card-stage-detail {
+    animation: none;
+  }
+}

@@ -1,7 +1,7 @@
 import { dialog, ipcMain, shell } from 'electron'
 import { IPC, type SelectExportPathOptions } from '../shared/ipc'
 import { isAllowedDeepLink } from '../shared/cleanup'
-import type { ChecklistState, DossierSnapshot } from '../shared/types'
+import type { AppSettings, ChecklistState, DossierSnapshot } from '../shared/types'
 import { parseExport } from '../parsers'
 import { getStore } from './persistence'
 
@@ -36,6 +36,18 @@ export function registerIpc(): void {
   ipcMain.handle(IPC.saveChecklist, (_event, checklist: ChecklistState) =>
     getStore().saveChecklist(checklist)
   )
+
+  ipcMain.handle(IPC.saveSettings, (_event, settings: AppSettings) => {
+    if (
+      !settings ||
+      typeof settings !== 'object' ||
+      typeof settings.timezone !== 'string' ||
+      settings.timezone.length === 0
+    ) {
+      return Promise.reject(new Error('invalid settings'))
+    }
+    return getStore().saveSettings({ timezone: settings.timezone })
+  })
 
   ipcMain.handle(IPC.clearAll, () => getStore().clear())
 

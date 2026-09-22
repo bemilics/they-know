@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import Dashboard from './pages/Dashboard'
 import ImportValidate from './pages/ImportValidate'
 import OnboardingWizard from './pages/OnboardingWizard'
+import ConfessionalMode from './pages/ConfessionalMode'
 import { useAppStore } from './state/store'
 
 export default function App(): React.JSX.Element {
@@ -45,6 +46,7 @@ export default function App(): React.JSX.Element {
         {phase === 'welcome' || phase === 'guide' ? <OnboardingWizard /> : null}
         {phase === 'import' ? <ImportValidate /> : null}
         {phase === 'dashboard' ? <Dashboard /> : null}
+        {phase === 'confessional' ? <ConfessionalMode /> : null}
       </main>
     </div>
   )

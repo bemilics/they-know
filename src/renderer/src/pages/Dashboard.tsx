@@ -14,6 +14,7 @@ export default function Dashboard(): React.JSX.Element | null {
   const openCleanup = useAppStore((s) => s.openCleanup)
   const resetAll = useAppStore((s) => s.resetAll)
   const setPhase = useAppStore((s) => s.setPhase)
+  const openConfessional = useAppStore((s) => s.openConfessional)
   const [confirmingReset, setConfirmingReset] = useState(false)
 
   const agg = useMemo(
@@ -36,6 +37,18 @@ export default function Dashboard(): React.JSX.Element | null {
 
       <UncomfortableFact agg={agg} />
       <BigCounters agg={agg} />
+
+      <div className="section-card confessional-cta">
+        <div className="section-head">
+          <div>
+            <h2>{t('dashboard:confessional.title')}</h2>
+            <p className="lead">{t('dashboard:confessional.description')}</p>
+          </div>
+          <button className="primary" onClick={() => void openConfessional()}>
+            {t('dashboard:confessional.cta')}
+          </button>
+        </div>
+      </div>
 
       {sections.map((section) => (
         <div className="section-card" key={section.id}>

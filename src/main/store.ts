@@ -1,6 +1,6 @@
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
-import type { ChecklistState, DossierSnapshot, StoredData } from '../shared/types'
+import type { AppSettings, ChecklistState, DossierSnapshot, StoredData } from '../shared/types'
 
 function isSnapshot(value: unknown): value is DossierSnapshot {
   if (value === null || typeof value !== 'object') return false
@@ -17,6 +17,11 @@ function isChecklist(value: unknown): value is ChecklistState {
     if (i.doneAt !== null && typeof i.doneAt !== 'string') return false
   }
   return true
+}
+
+function isSettings(value: unknown): value is AppSettings {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return false
+  return typeof (value as AppSettings).timezone === 'string'
 }
 
 export class FileStore {
@@ -44,9 +49,17 @@ export class FileStore {
   async load(): Promise<StoredData> {
     const snapshot = await this.readJson('snapshot.json')
     const checklist = await this.readJson('checklist.json')
+    const settings = await this.readJson('settings.json')
+    let tz = 'UTC'
+    try {
+      tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+    } catch {
+      tz = 'UTC'
+    }
     return {
       snapshot: isSnapshot(snapshot) ? snapshot : null,
-      checklist: isChecklist(checklist) ? checklist : {}
+      checklist: isChecklist(checklist) ? checklist : {},
+      settings: isSettings(settings) ? settings : { timezone: tz }
     }
   }
 
@@ -58,8 +71,13 @@ export class FileStore {
     await this.writeJson('checklist.json', checklist)
   }
 
+  async saveSettings(settings: AppSettings): Promise<void> {
+    await this.writeJson('settings.json', settings)
+  }
+
   async clear(): Promise<void> {
     await fs.rm(this.file('snapshot.json'), { force: true })
     await fs.rm(this.file('checklist.json'), { force: true })
+    await fs.rm(this.file('settings.json'), { force: true })
   }
 }

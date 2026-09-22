@@ -1,0 +1,123 @@
+{
+  "intro": {
+    "title": "Confessional mode",
+    "subtitle": "The impact engine reviewed your data on this computer. Nothing was sent anywhere.",
+    "start": "Start",
+    "analyzing": "Analyzing your data…",
+    "analyzingStage": "Step: {{stage}}",
+    "error": "Something went wrong while analyzing. Try again.",
+    "retry": "Retry",
+    "empty": "Not enough data for the impact engine yet."
+  },
+  "progress": {
+    "init": "preparing",
+    "places": "places",
+    "lexicon": "lexicon",
+    "spikes": "spikes",
+    "correlations": "correlations",
+    "cards": "cards",
+    "done": "done"
+  },
+  "card": {
+    "step": "Step {{current}} of {{total}}",
+    "next": "Next",
+    "reveal": "Reveal",
+    "finish": "Finish",
+    "close": "Close",
+    "endTitle": "End of confessional",
+    "endSubtitle": "This is what your own data hints at. You can delete it whenever you want.",
+    "backToDossier": "Back to my dossier",
+    "levels": {
+      "hecho": "Fact",
+      "inferencia": "Inference",
+      "implicancia": "Implication"
+    },
+    "confidence": {
+      "alta": "high confidence",
+      "media": "medium confidence",
+      "baja": "low confidence"
+    },
+    "evidence": "Evidence",
+    "nCards": "{{count}} cards"
+  },
+  "places": {
+    "casa": {
+      "titulo": "Your home repeats",
+      "detalle": "You spent {{noches}} nights in the same place according to your location history."
+    },
+    "trabajo": {
+      "titulo": "Your workplace, tracked",
+      "detalle": "A second place shows {{dias_laborales}} long weekdays sessions."
+    },
+    "secundario": {
+      "titulo": "Another frequent address",
+      "detalle": "Another place appears {{noches}} nights: someone else's home?"
+    }
+  },
+  "streak": {
+    "titulo": "Presence streak",
+    "detalle": "Your location was recorded {{dias}} days in a row without missing one."
+  },
+  "coverage": {
+    "titulo": "Tracking followed you to bed",
+    "detalle": "{{porcentaje}}% of days have activity between 2 and 4 AM."
+  },
+  "lexicon": {
+    "salud": {
+      "titulo": "You searched for mental health help",
+      "detalle": "{{cantidad}} searches related to therapy, anxiety or medication."
+    },
+    "dinero": {
+      "titulo": "Money keeps you up",
+      "detalle": "{{cantidad}} searches about debt, credit or finances."
+    },
+    "legal": {
+      "titulo": "Legal matters on the radar",
+      "detalle": "{{cantidad}} searches with legal or court terms."
+    },
+    "relaciones": {
+      "titulo": "You're mapping someone else",
+      "detalle": "{{cantidad}} searches that smell like dating or a third person."
+    },
+    "salud_fisica": {
+      "titulo": "Concern about your body",
+      "detalle": "{{cantidad}} medical or treatment searches."
+    },
+    "adicciones": {
+      "titulo": "You talked about use or recovery",
+      "detalle": "{{cantidad}} searches linked to substances or sobriety."
+    },
+    "trabajo": {
+      "titulo": "Work won't leave you alone",
+      "detalle": "{{cantidad}} searches about jobs, layoffs or retirement."
+    }
+  },
+  "spikes": {
+    "trabajo": {
+      "titulo": "Job-search spike",
+      "detalle": "In week {{semana}} you searched for jobs {{cantidad}} times (z={{z}})."
+    },
+    "salud": {
+      "titulo": "Health-search spike",
+      "detalle": "In week {{semana}} medical topics spiked: {{cantidad}} searches."
+    },
+    "viajes": {
+      "titulo": "Travel spike",
+      "detalle": "In week {{semana}} you planned trips {{cantidad}} times."
+    },
+    "compras": {
+      "titulo": "Shopping spike",
+      "detalle": "In week {{semana}} you checked prices {{cantidad}} times."
+    }
+  },
+  "correlation": {
+    "titulo": "You searched for something right where you were",
+    "detalle": "\"{{busqueda}}\" appeared {{ocurrencias}} times next to your location (±{{delta_minutos}} min).",
+    "nivel_implicancia": "Not a fact: a recurring coincidence."
+  },
+  "levels": {
+    "hecho": "Fact: the data says it.",
+    "inferencia": "Inference: the pattern suggests it.",
+    "implicancia": "Implication: correlation, not causation."
+  }
+}

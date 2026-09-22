@@ -8,10 +8,12 @@
     "src/main",
     "src/preload",
     "src/parsers",
+    "src/impact",
     "src/shared",
     "src/types",
     "tests",
     "electron.vite.config.ts",
     "vitest.config.ts"
-  ]
+  ],
+  "exclude": ["tests/**/*.test.tsx"]
 }
