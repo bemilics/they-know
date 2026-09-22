@@ -1,9 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import { IPC, type TheyKnowApi } from '../shared/ipc'
+import { IPC, type SelectExportPathOptions, type TheyKnowApi } from '../shared/ipc'
 import type { ChecklistState, DossierSnapshot } from '../shared/types'
 
 const api: TheyKnowApi = {
-  selectExportPath: (title?: string) => ipcRenderer.invoke(IPC.selectExportPath, title),
+  selectExportPath: (options?: SelectExportPathOptions) =>
+    ipcRenderer.invoke(IPC.selectExportPath, options),
   parseExport: (paths: string[]) => ipcRenderer.invoke(IPC.parseExport, paths),
   loadStored: () => ipcRenderer.invoke(IPC.loadStored),
   saveSnapshot: (snapshot: DossierSnapshot) => ipcRenderer.invoke(IPC.saveSnapshot, snapshot),

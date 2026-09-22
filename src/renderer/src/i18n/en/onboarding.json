@@ -25,7 +25,8 @@
   },
   "import": {
     "title": "Import your export",
-    "select": "Choose my .zip files or their folder",
+    "selectFiles": "Choose my .zip files",
+    "selectFolder": "Choose the folder with my .zip files",
     "hint": "You can pick several .zip files at once, or the folder containing them. No need to unzip.",
     "processing": "Reading your files on this computer…",
     "processingNote": "Nothing leaves your device. Large files may take a few minutes.",

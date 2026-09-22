@@ -21,7 +21,7 @@ interface AppState {
 
   hydrate(): Promise<void>
   setPhase(phase: Phase): void
-  startImport(): Promise<void>
+  startImport(mode: 'files' | 'folder'): Promise<void>
   confirmImport(): Promise<void>
   retryImport(): void
   toggleCleanup(id: string): Promise<void>
@@ -54,8 +54,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ phase, importFailed: false })
   },
 
-  async startImport() {
-    const selected = await window.api.selectExportPath()
+  async startImport(mode) {
+    const selected = await window.api.selectExportPath({ mode })
     if (selected.canceled || selected.paths.length === 0) return
     set({ importing: true, importFailed: false, importReport: null })
     try {

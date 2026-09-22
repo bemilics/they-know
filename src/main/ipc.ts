@@ -1,5 +1,5 @@
 import { dialog, ipcMain, shell } from 'electron'
-import { IPC } from '../shared/ipc'
+import { IPC, type SelectExportPathOptions } from '../shared/ipc'
 import { isAllowedDeepLink } from '../shared/cleanup'
 import type { ChecklistState, DossierSnapshot } from '../shared/types'
 import { parseExport } from '../parsers'
@@ -10,11 +10,12 @@ function isStringArray(value: unknown): value is string[] {
 }
 
 export function registerIpc(): void {
-  ipcMain.handle(IPC.selectExportPath, async (_event, title?: string) => {
+  ipcMain.handle(IPC.selectExportPath, async (_event, options?: SelectExportPathOptions) => {
+    const mode = options?.mode === 'folder' ? 'folder' : 'files'
     const result = await dialog.showOpenDialog({
-      title: typeof title === 'string' ? title : undefined,
-      properties: ['openFile', 'openDirectory', 'multiSelections'],
-      filters: [{ name: 'ZIP', extensions: ['zip'] }]
+      title: typeof options?.title === 'string' ? options.title : undefined,
+      properties: mode === 'folder' ? ['openDirectory'] : ['openFile', 'multiSelections'],
+      filters: mode === 'files' ? [{ name: 'ZIP', extensions: ['zip'] }] : undefined
     })
     return { canceled: result.canceled, paths: result.filePaths }
   })

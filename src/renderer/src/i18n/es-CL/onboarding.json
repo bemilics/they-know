@@ -25,7 +25,8 @@
   },
   "import": {
     "title": "Importa tu exportación",
-    "select": "Elegir mis .zip o su carpeta",
+    "selectFiles": "Elegir mis archivos .zip",
+    "selectFolder": "Elegir la carpeta con mis .zip",
     "hint": "Puedes elegir varios .zip a la vez, o la carpeta que los contiene. No hace falta descomprimir.",
     "processing": "Leyendo tus archivos en este computador…",
     "processingNote": "Nada sale de tu equipo. Archivos grandes pueden tardar unos minutos.",

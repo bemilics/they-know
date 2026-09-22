@@ -15,8 +15,15 @@ export interface SelectExportPathResult {
   paths: string[]
 }
 
+export type SelectExportMode = 'files' | 'folder'
+
+export interface SelectExportPathOptions {
+  mode?: SelectExportMode
+  title?: string
+}
+
 export interface TheyKnowApi {
-  selectExportPath(title?: string): Promise<SelectExportPathResult>
+  selectExportPath(options?: SelectExportPathOptions): Promise<SelectExportPathResult>
   parseExport(paths: string[]): Promise<ParseReport>
   loadStored(): Promise<StoredData>
   saveSnapshot(snapshot: DossierSnapshot): Promise<void>

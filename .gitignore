@@ -1,5 +1,6 @@
 node_modules/
 out/
 dist/
+mock-takeout/
 *.log
 .DS_Store

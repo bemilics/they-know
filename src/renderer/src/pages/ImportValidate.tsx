@@ -34,13 +34,7 @@ export default function ImportValidate(): React.JSX.Element {
           <button className="secondary" onClick={() => setPhase('welcome')}>
             {t('common:back')}
           </button>
-          <button
-            className="primary"
-            onClick={() => {
-              retryImport()
-              void startImport()
-            }}
-          >
+          <button className="primary" onClick={() => retryImport()}>
             {t('onboarding:import.notTakeout.retry')}
           </button>
         </div>
@@ -85,12 +79,17 @@ export default function ImportValidate(): React.JSX.Element {
     <div>
       <h1>{t('onboarding:import.title')}</h1>
       <p className="lead">{t('onboarding:import.hint')}</p>
+      <div className="path-choice">
+        <button onClick={() => void startImport('files')}>
+          {t('onboarding:import.selectFiles')}
+        </button>
+        <button onClick={() => void startImport('folder')}>
+          {t('onboarding:import.selectFolder')}
+        </button>
+      </div>
       <div className="actions-row">
         <button className="secondary" onClick={() => setPhase('welcome')}>
           {t('common:back')}
-        </button>
-        <button className="primary" onClick={() => void startImport()}>
-          {t('onboarding:import.select')}
         </button>
       </div>
     </div>
