@@ -1,0 +1,52 @@
+{
+  "title": "Your dossier",
+  "subtitle": "This is what Google stores about you",
+  "counters": {
+    "locationDays": "days with your location recorded",
+    "locationPoints": "location points",
+    "searches": "searches recorded",
+    "searchesSince": "the oldest is from {{year}}",
+    "videos": "watched videos recorded",
+    "empty": "No data for this section in your export yet."
+  },
+  "sections": {
+    "location": {
+      "title": "Locations",
+      "description": "Where you've been, according to Google's record."
+    },
+    "search": {
+      "title": "Searches",
+      "description": "What you've asked Google."
+    },
+    "youtube": {
+      "title": "YouTube",
+      "description": "What you've watched, according to your history."
+    }
+  },
+  "uncomfortable": {
+    "title": "The most uncomfortable fact",
+    "nightSearches": "{{count}} of your searches happened between midnight and 5 AM. Google knows what keeps you up at night.",
+    "oldestRecord": "Google has stored your activity for {{years}} years.",
+    "locationSpan": "Your location was recorded on {{count}} different days.",
+    "videos": "Google recorded {{count}} videos you watched."
+  },
+  "map": {
+    "note": "Map images come from OpenStreetMap: it's the only thing this app downloads from the internet. Your locations never leave the computer."
+  },
+  "timeline": {
+    "title": "Timeline",
+    "empty": "No records yet"
+  },
+  "coverage": {
+    "title": "Read coverage",
+    "skippedReasons": {
+      "unsupported-section": "unsupported section",
+      "unknown-format": "unrecognized format",
+      "parse-error": "damaged file",
+      "non-json": "not JSON"
+    }
+  },
+  "cleanupCta": "How do I delete this?",
+  "reset": "Delete my data from this app",
+  "resetConfirm": "This removes the dossier saved on this computer. It deletes nothing at Google. Continue?"
+}

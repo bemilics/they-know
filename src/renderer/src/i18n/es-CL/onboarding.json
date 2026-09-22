@@ -1,0 +1,49 @@
+{
+  "welcome": {
+    "title": "Veamos qué saben de ti",
+    "subtitle": "Google y Meta guardan más de lo que imaginas: dónde estuviste, qué buscaste, qué viste. Esta app te lo muestra y te ayuda a borrarlo. Todo pasa en tu computador: nada se sube a internet.",
+    "google": "Tengo cuenta de Google",
+    "googleHint": "Gmail, Maps, YouTube, búsquedas",
+    "meta": "Tengo cuenta de Meta",
+    "metaSoon": "Disponible en la próxima versión",
+    "hasSnapshot": "Continuar donde quedé"
+  },
+  "googleGuide": {
+    "title": "Primero: descarga tus datos de Google",
+    "intro": "Google llama a esto \"Takeout\": un archivo .zip con tu actividad. Te guiamos paso a paso.",
+    "steps": [
+      "Abre takeout.google.com en tu navegador e inicia sesión con tu cuenta de Google.",
+      "En la lista de productos, deja marcados al menos: Mi actividad, Historial de ubicaciones y YouTube y YouTube Music. (Puedes dejar todo marcado.)",
+      "Baja y presiona \"Siguiente paso\".",
+      "En \"Tipo de archivo\" elige .zip. En \"Tamaño máximo\" elige el mayor disponible.",
+      "Presiona \"Crear exportación\".",
+      "Google te avisará por correo cuando esté lista. Puede tardar horas o incluso días: es normal.",
+      "Cuando llegue el correo, descarga TODOS los .zip (pueden ser varios: takeout-001.zip, takeout-002.zip…) y guárdalos juntos en una carpeta."
+    ],
+    "patience": "La exportación puede tardar horas o días. Cierra esta app si quieres: aquí te esperamos.",
+    "ready": "Ya tengo mis archivos .zip"
+  },
+  "import": {
+    "title": "Importa tu exportación",
+    "select": "Elegir mis .zip o su carpeta",
+    "hint": "Puedes elegir varios .zip a la vez, o la carpeta que los contiene. No hace falta descomprimir.",
+    "processing": "Leyendo tus archivos en este computador…",
+    "processingNote": "Nada sale de tu equipo. Archivos grandes pueden tardar unos minutos.",
+    "notTakeout": {
+      "title": "Esto no parece un Takeout de Google",
+      "help": [
+        "Elige los archivos .zip que descargaste desde takeout.google.com (no los descomprimas).",
+        "Si elegiste una carpeta, revisa que los .zip estén dentro.",
+        "Si el problema sigue, vuelve a takeout.google.com y crea una exportación nueva en formato .zip."
+      ],
+      "retry": "Intentar con otros archivos"
+    },
+    "coverage": {
+      "title": "Qué se pudo leer",
+      "parsed": "Secciones leídas: {{count}}",
+      "skipped": "Secciones omitidas: {{count}}",
+      "skippedNote": "Algunas secciones tenían un formato que esta versión no reconoce. No pasa nada: se omiten y se te informa aquí.",
+      "continue": "Ver mi expediente"
+    }
+  }
+}

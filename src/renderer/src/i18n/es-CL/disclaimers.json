@@ -1,0 +1,6 @@
+{
+  "title": "Antes de hacerlo, sé honesto contigo",
+  "delete-visible": "Esto borra la actividad que Google te muestra. Es irreversible: no hay respaldo. Datos derivados que Google haya creado internamente pueden conservarse: eso no es verificable desde fuera.",
+  "disable-collection": "Esto le dice a Google que deje de guardar esta actividad y de personalizar con ella. No borra lo ya guardado (por eso conviene borrar primero y desactivar después). Tus servicios serán menos personalizados.",
+  "derived-models": "Google puede conservar datos derivados y modelos entrenados con tu información. Esto no es verificable desde fuera. Ninguna app —incluida esta— puede prometerte un borrado total."
+}

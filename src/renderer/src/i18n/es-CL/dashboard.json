@@ -1,0 +1,52 @@
+{
+  "title": "Tu expediente",
+  "subtitle": "Esto es lo que Google guarda sobre ti",
+  "counters": {
+    "locationDays": "días con tu ubicación registrada",
+    "locationPoints": "puntos de ubicación",
+    "searches": "búsquedas registradas",
+    "searchesSince": "la más antigua es de {{year}}",
+    "videos": "videos vistos registrados",
+    "empty": "Aún no hay datos de esta sección en tu exportación."
+  },
+  "sections": {
+    "location": {
+      "title": "Ubicaciones",
+      "description": "Dónde estuviste, según el registro de Google."
+    },
+    "search": {
+      "title": "Búsquedas",
+      "description": "Lo que le has preguntado a Google."
+    },
+    "youtube": {
+      "title": "YouTube",
+      "description": "Lo que has visto, según tu historial."
+    }
+  },
+  "uncomfortable": {
+    "title": "El dato más incómodo",
+    "nightSearches": "{{count}} de tus búsquedas fueron entre medianoche y las 5 AM. Google sabe qué te quita el sueño.",
+    "oldestRecord": "Google guarda actividad tuya desde hace {{years}} años.",
+    "locationSpan": "Tu ubicación quedó registrada en {{count}} días distintos.",
+    "videos": "Google registró {{count}} videos que viste."
+  },
+  "map": {
+    "note": "Las imágenes del mapa vienen de OpenStreetMap: es lo único que esta app descarga de internet. Tus ubicaciones nunca salen del computador."
+  },
+  "timeline": {
+    "title": "Línea de tiempo",
+    "empty": "Sin registros por ahora"
+  },
+  "coverage": {
+    "title": "Cobertura de la lectura",
+    "skippedReasons": {
+      "unsupported-section": "sección no soportada",
+      "unknown-format": "formato no reconocido",
+      "parse-error": "archivo dañado",
+      "non-json": "no es JSON"
+    }
+  },
+  "cleanupCta": "¿Cómo borro esto?",
+  "reset": "Borrar mis datos de esta app",
+  "resetConfirm": "Esto elimina el expediente guardado en este computador. No borra nada en Google. ¿Continuar?"
+}

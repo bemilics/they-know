@@ -1,0 +1,103 @@
+{
+  "panelTitle": "How do I delete this?",
+  "levelLabel": "Action type",
+  "levels": {
+    "delete-visible": "Delete visible activity",
+    "disable-collection": "Disable collection",
+    "derived-models": "Derived models"
+  },
+  "stepsLabel": "Steps to follow",
+  "youLoseLabel": "What you lose by doing this",
+  "openLink": "Open the exact page",
+  "done": "I did it",
+  "doneAt": "Done on {{date}}",
+  "progress": "{{done}} of {{total}} actions completed",
+  "recommendedOrder": "Recommendation: first delete the stored activity, then disable collection.",
+  "actions": {
+    "google": {
+      "location": {
+        "delete": {
+          "title": "Delete your location history (Timeline)",
+          "steps": [
+            "Press \"Open the exact page\": your Google Maps Timeline will open in your browser.",
+            "At the bottom right, press the gear icon.",
+            "Choose \"Delete all location history\".",
+            "Tick the confirmation box and press \"Delete\"."
+          ],
+          "youLose": "Google Maps will no longer show your timeline or the places you've been."
+        },
+        "disable": {
+          "title": "Disable recording of your location",
+          "steps": [
+            "Press \"Open the exact page\": \"Activity controls\" will open in your Google account.",
+            "Find the \"Timeline\" or \"Location History\" section.",
+            "Press \"Turn off\" and confirm."
+          ],
+          "youLose": "Google Maps won't remember your places or improve recommendations based on where you've been."
+        }
+      },
+      "search": {
+        "delete": {
+          "title": "Delete your search history",
+          "steps": [
+            "Press \"Open the exact page\": Google's \"My Activity\" will open.",
+            "At the top, press \"Delete\" and choose \"All time\".",
+            "Select the \"Search\" product and confirm."
+          ],
+          "youLose": "Autocomplete will stop suggesting past searches."
+        },
+        "disable": {
+          "title": "Disable saving of your web & app activity",
+          "steps": [
+            "Press \"Open the exact page\": \"Activity controls\" will open.",
+            "Find \"Web & App Activity\".",
+            "Press \"Turn off\" and confirm."
+          ],
+          "youLose": "Search, Maps and Assistant will become less personalized."
+        }
+      },
+      "youtube": {
+        "delete": {
+          "title": "Delete your YouTube history",
+          "steps": [
+            "Press \"Open the exact page\": your YouTube history will open.",
+            "In the right-hand menu choose \"Clear all watch history\".",
+            "Confirm with \"Clear watch history\"."
+          ],
+          "youLose": "Video recommendations will reset."
+        },
+        "disable": {
+          "title": "Pause recording of what you watch on YouTube",
+          "steps": [
+            "Press \"Open the exact page\": \"Activity controls\" will open.",
+            "Find \"YouTube History\".",
+            "Press \"Turn off\" and confirm."
+          ],
+          "youLose": "YouTube won't remember what you watched or fine-tune recommendations."
+        }
+      },
+      "ads": {
+        "disable": {
+          "title": "Disable ad personalization",
+          "steps": [
+            "Press \"Open the exact page\": Google's My Ad Center will open.",
+            "Under \"Customize ads\", turn personalization off.",
+            "Confirm."
+          ],
+          "youLose": "You'll still see ads, but generic ones (not based on you)."
+        }
+      },
+      "models": {
+        "derived": {
+          "title": "What can't be deleted: derived models",
+          "steps": [
+            "Read the honesty notice below.",
+            "If you want to go further, your account's \"Data & privacy\" page has more options.",
+            "Consider requesting full account deletion if you no longer use it."
+          ],
+          "youLose": "Nothing: this section is informational."
+        }
+      }
+    }
+  }
+}

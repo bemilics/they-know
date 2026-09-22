@@ -1,0 +1,49 @@
+{
+  "welcome": {
+    "title": "Let's see what they know about you",
+    "subtitle": "Google and Meta store more than you imagine: where you've been, what you searched, what you watched. This app shows you and helps you delete it. Everything happens on your computer: nothing is uploaded to the internet.",
+    "google": "I have a Google account",
+    "googleHint": "Gmail, Maps, YouTube, searches",
+    "meta": "I have a Meta account",
+    "metaSoon": "Coming in the next version",
+    "hasSnapshot": "Continue where I left off"
+  },
+  "googleGuide": {
+    "title": "First: download your data from Google",
+    "intro": "Google calls this \"Takeout\": a .zip file with your activity. We'll guide you step by step.",
+    "steps": [
+      "Open takeout.google.com in your browser and sign in with your Google account.",
+      "In the product list, keep at least: My Activity, Location History and YouTube and YouTube Music. (You can keep everything selected.)",
+      "Scroll down and press \"Next step\".",
+      "For \"File type\" choose .zip. For \"Maximum size\" choose the largest available.",
+      "Press \"Create export\".",
+      "Google will email you when it's ready. It can take hours or even days: that's normal.",
+      "When the email arrives, download ALL the .zip files (there may be several: takeout-001.zip, takeout-002.zip…) and keep them together in one folder."
+    ],
+    "patience": "The export can take hours or days. You can close this app: we'll be here.",
+    "ready": "I have my .zip files"
+  },
+  "import": {
+    "title": "Import your export",
+    "select": "Choose my .zip files or their folder",
+    "hint": "You can pick several .zip files at once, or the folder containing them. No need to unzip.",
+    "processing": "Reading your files on this computer…",
+    "processingNote": "Nothing leaves your device. Large files may take a few minutes.",
+    "notTakeout": {
+      "title": "This doesn't look like a Google Takeout",
+      "help": [
+        "Pick the .zip files you downloaded from takeout.google.com (don't unzip them).",
+        "If you picked a folder, check that the .zip files are inside it.",
+        "If the problem persists, go back to takeout.google.com and create a new export in .zip format."
+      ],
+      "retry": "Try with other files"
+    },
+    "coverage": {
+      "title": "What could be read",
+      "parsed": "Sections read: {{count}}",
+      "skipped": "Sections skipped: {{count}}",
+      "skippedNote": "Some sections had a format this version doesn't recognize. That's fine: they're skipped and reported here.",
+      "continue": "See my dossier"
+    }
+  }
+}

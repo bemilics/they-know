@@ -1,0 +1,103 @@
+{
+  "panelTitle": "¿Cómo borro esto?",
+  "levelLabel": "Tipo de acción",
+  "levels": {
+    "delete-visible": "Borrar actividad visible",
+    "disable-collection": "Desactivar recolección",
+    "derived-models": "Modelos derivados"
+  },
+  "stepsLabel": "Pasos a seguir",
+  "youLoseLabel": "Qué pierdes al hacerlo",
+  "openLink": "Abrir la página exacta",
+  "done": "Lo hice",
+  "doneAt": "Hecho el {{date}}",
+  "progress": "{{done}} de {{total}} acciones completadas",
+  "recommendedOrder": "Recomendación: primero borra la actividad guardada, después desactiva la recolección.",
+  "actions": {
+    "google": {
+      "location": {
+        "delete": {
+          "title": "Borra tu historial de ubicaciones (Timeline)",
+          "steps": [
+            "Presiona \"Abrir la página exacta\": se abrirá tu Timeline de Google Maps en tu navegador.",
+            "Abajo a la derecha, presiona el ícono de engranaje.",
+            "Elige \"Eliminar todo el historial de ubicaciones\".",
+            "Marca la casilla de confirmación y presiona \"Eliminar\"."
+          ],
+          "youLose": "Google Maps dejará de mostrar tu línea de tiempo y los lugares donde estuviste."
+        },
+        "disable": {
+          "title": "Desactiva el registro de tu ubicación",
+          "steps": [
+            "Presiona \"Abrir la página exacta\": se abrirá \"Controles de actividad\" en tu cuenta de Google.",
+            "Busca la sección \"Cronología\" o \"Historial de ubicaciones\".",
+            "Presiona \"Desactivar\" y confirma."
+          ],
+          "youLose": "Google Maps no recordará tus lugares ni mejorará recomendaciones basadas en dónde estuviste."
+        }
+      },
+      "search": {
+        "delete": {
+          "title": "Borra tu historial de búsquedas",
+          "steps": [
+            "Presiona \"Abrir la página exacta\": se abrirá \"Mi actividad\" de Google.",
+            "Arriba, presiona \"Eliminar\" y elige \"Todo el período\".",
+            "Selecciona el producto \"Búsqueda\" y confirma."
+          ],
+          "youLose": "El autocompletado dejará de sugerirte búsquedas pasadas."
+        },
+        "disable": {
+          "title": "Desactiva el guardado de tu actividad web y apps",
+          "steps": [
+            "Presiona \"Abrir la página exacta\": se abrirá \"Controles de actividad\".",
+            "Busca \"Actividad en la Web y Aplicaciones\".",
+            "Presiona \"Desactivar\" y confirma."
+          ],
+          "youLose": "La búsqueda, Maps y el Asistente se volverán menos personalizados."
+        }
+      },
+      "youtube": {
+        "delete": {
+          "title": "Borra tu historial de YouTube",
+          "steps": [
+            "Presiona \"Abrir la página exacta\": se abrirá tu historial de YouTube.",
+            "En el menú de la derecha elige \"Borrar todo el historial de reproducciones\".",
+            "Confirma con \"Borrar historial\"."
+          ],
+          "youLose": "Las recomendaciones de videos se reiniciarán."
+        },
+        "disable": {
+          "title": "Pausa el registro de lo que ves en YouTube",
+          "steps": [
+            "Presiona \"Abrir la página exacta\": se abrirá \"Controles de actividad\".",
+            "Busca \"Historial de YouTube\".",
+            "Presiona \"Desactivar\" y confirma."
+          ],
+          "youLose": "YouTube no recordará lo que viste ni afinará recomendaciones."
+        }
+      },
+      "ads": {
+        "disable": {
+          "title": "Desactiva la personalización de anuncios",
+          "steps": [
+            "Presiona \"Abrir la página exacta\": se abrirá Mi centro de anuncios de Google.",
+            "En \"Personalizar anuncios\", desactiva la personalización.",
+            "Confirma."
+          ],
+          "youLose": "Seguirás viendo anuncios, pero genéricos (no basados en ti)."
+        }
+      },
+      "models": {
+        "derived": {
+          "title": "Lo que no se puede borrar: modelos derivados",
+          "steps": [
+            "Lee el aviso de honestidad abajo.",
+            "Si quieres ir más lejos, en \"Datos y privacidad\" de tu cuenta puedes revisar más opciones.",
+            "Considera pedir la eliminación completa de la cuenta si ya no la usas."
+          ],
+          "youLose": "Nada: esta sección es informativa."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+appId: they-know
+productName: They Know
+copyright: Copyright © 2026
+asar: true
+directories:
+  buildResources: build
+  output: dist
+files:
+  - out/**
+  - package.json
+win:
+  target:
+    - nsis
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  shortcutName: They Know
+mac:
+  target:
+    - dmg
+  category: public.app-category.utilities
+  hardenedRuntime: false
+linux:
+  target:
+    - AppImage
+  category: Utility
+npmRebuild: false

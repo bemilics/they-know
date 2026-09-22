@@ -1,0 +1,6 @@
+{
+  "title": "Before you do it, be honest with yourself",
+  "delete-visible": "This deletes the activity Google shows you. It is irreversible: there is no backup. Derived data Google may have created internally can be retained: that is not verifiable from the outside.",
+  "disable-collection": "This tells Google to stop storing this activity and personalizing with it. It does not delete what's already stored (that's why you should delete first and disable after). Your services will become less personalized.",
+  "derived-models": "Google may retain derived data and models trained on your information. This is not verifiable from the outside. No app — including this one — can promise you complete deletion."
+}
