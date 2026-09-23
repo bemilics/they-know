@@ -6,8 +6,14 @@ import type {
   SkipReason
 } from '../../shared/types'
 import { classifyJsonText, classifyJsonValue, classifyMyActivityItem } from '../detect'
+import { looksLikeActivityHtml, parseActivityHtmlStream } from '../htmlActivity'
 import { readHead, streamObjectKeyArray, streamRootArray } from '../jsonStream'
-import { BIG_FILE_THRESHOLD, HEAD_SNIFF_BYTES, type SectionKind } from '../types'
+import {
+  ACTIVITY_HTML_SNIFF_BYTES,
+  BIG_FILE_THRESHOLD,
+  HEAD_SNIFF_BYTES,
+  type SectionKind
+} from '../types'
 import { openZipEntries, resolveZipPaths } from '../zipStream'
 import { parseLocationRecordItem, parseSemanticLocationItem } from './locations'
 import { parseSearchItem } from './searchHistory'
@@ -31,12 +37,17 @@ export class GoogleTakeoutAdapter {
 
       for (const entry of entries) {
         filesScanned++
-        if (!entry.path.toLowerCase().endsWith('.json')) continue
+        const lower = entry.path.toLowerCase()
+        const io = {
+          buffer: () => entry.buffer(),
+          stream: () => entry.stream()
+        }
         try {
-          await this.parseEntry(entry.path, entry.uncompressedSize, {
-            buffer: () => entry.buffer(),
-            stream: () => entry.stream()
-          }, entities, coverage)
+          if (lower.endsWith('.json')) {
+            await this.parseEntry(entry.path, entry.uncompressedSize, io, entities, coverage)
+          } else if (lower.endsWith('.html')) {
+            await this.parseHtmlEntry(entry.path, io, entities, coverage)
+          }
         } catch {
           coverage.skipped.push({ path: entry.path, reason: 'parse-error' })
         }
@@ -108,6 +119,22 @@ export class GoogleTakeoutAdapter {
     coverage.parsed.push({ path, kind, records })
   }
 
+  private async parseHtmlEntry(
+    path: string,
+    io: { stream: () => Readable },
+    entities: NormalizedEntity[],
+    coverage: CoverageReport
+  ): Promise<void> {
+    const head = await readHead(io.stream, ACTIVITY_HTML_SNIFF_BYTES)
+    if (!looksLikeActivityHtml(head)) return
+    let records = 0
+    await parseActivityHtmlStream(io.stream(), (entity) => {
+      entities.push(entity)
+      records++
+    })
+    coverage.parsed.push({ path, kind: 'activity-html', records })
+  }
+
   private itemToEntity(kind: SectionKind, item: unknown): NormalizedEntity | null {
     if (item === null || typeof item !== 'object') return null
     const rec = item as Record<string, unknown>
@@ -122,6 +149,8 @@ export class GoogleTakeoutAdapter {
         if (section === 'youtube') return parseYoutubeItem(rec)
         return null
       }
+      case 'activity-html':
+        return null
     }
   }
 

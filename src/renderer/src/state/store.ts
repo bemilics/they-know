@@ -97,12 +97,13 @@ export const useAppStore = create<AppState>((set, get) => ({
     try {
       const report = await window.api.parseExport(selected.paths)
       if (report.source === 'unknown') {
-        set({ importing: false, importFailed: true })
+        set({ importing: false, importFailed: true, importReport: report })
       } else {
         set({ importing: false, importReport: report })
       }
-    } catch {
-      set({ importing: false, importFailed: true })
+    } catch (err) {
+      console.error('parseExport failed', err)
+      set({ importing: false, importFailed: true, importReport: null })
     }
   },
 

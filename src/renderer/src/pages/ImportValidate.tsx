@@ -21,15 +21,43 @@ export default function ImportValidate(): React.JSX.Element {
   }
 
   if (importFailed) {
-    const help = t('onboarding:import.notTakeout.help', {
+    const report = importReport
+    const noZips = report !== null && report.filesScanned === 0
+    const helpKey = noZips
+      ? 'onboarding:import.notTakeout.helpNoZips'
+      : 'onboarding:import.notTakeout.help'
+    const help = t(helpKey, {
       returnObjects: true
     }) as unknown as string[]
+    const skipped = report?.coverage.skipped.slice(0, 50) ?? []
+    const skippedHidden = (report?.coverage.skipped.length ?? 0) - skipped.length
     return (
       <div className="error-card">
         <h2>{t('onboarding:import.notTakeout.title')}</h2>
         <ul>
           {Array.isArray(help) ? help.map((h, i) => <li key={i}>{h}</li>) : null}
         </ul>
+        {report ? (
+          <p className="note">
+            {t('onboarding:import.notTakeout.scanned', { count: report.filesScanned })}
+          </p>
+        ) : null}
+        {skipped.length > 0 ? (
+          <>
+            <p className="note">{t('onboarding:import.coverage.skippedNote')}</p>
+            <div className="coverage-list">
+              {skipped.map((s, i) => (
+                <div key={i}>
+                  <code>{s.path}</code> —{' '}
+                  {t(`dashboard:coverage.skippedReasons.${s.reason}`, s.reason)}
+                </div>
+              ))}
+              {skippedHidden > 0 ? (
+                <div>{t('onboarding:import.notTakeout.moreSkipped', { count: skippedHidden })}</div>
+              ) : null}
+            </div>
+          </>
+        ) : null}
         <div className="actions-row">
           <button className="secondary" onClick={() => setPhase('welcome')}>
             {t('common:back')}
@@ -54,12 +82,19 @@ export default function ImportValidate(): React.JSX.Element {
           <>
             <p className="note">{t('onboarding:import.coverage.skippedNote')}</p>
             <div className="coverage-list">
-              {importReport.coverage.skipped.map((s, i) => (
+              {importReport.coverage.skipped.slice(0, 50).map((s, i) => (
                 <div key={i}>
                   <code>{s.path}</code> —{' '}
                   {t(`dashboard:coverage.skippedReasons.${s.reason}`, s.reason)}
                 </div>
               ))}
+              {importReport.coverage.skipped.length > 50 ? (
+                <div>
+                  {t('onboarding:import.notTakeout.moreSkipped', {
+                    count: importReport.coverage.skipped.length - 50
+                  })}
+                </div>
+              ) : null}
             </div>
           </>
         ) : null}

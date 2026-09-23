@@ -7,10 +7,11 @@
 
 - **Fase:** 1 (MVP) — **COMPLETA** (pendiente aprobación del usuario)
 - **Fase Impacto (motor + confesionario):** A/B/C **implementadas, sin commitear** (apagón antes del commit)
-- **Última actualización:** 2026-09-22 (motor de impacto + coreografía en working tree)
-- **Salud:** tests 60/60 ✓ · typecheck ✓ · lint ✓ · build producción ✓ · `electron-builder --dir` ✓
-- **Prueba manual Fase 1:** la app arranca con `npm run dev` ✓. El usuario probó importar la mock data: la importación corrió, pero **no está seguro de que los resultados se muestren correctos** → pendiente verificar visualmente el dashboard. Probará con su Takeout real cuando llegue.
-- **Cambios sin commitear:** `src/impact/`, ConfessionalMode/CardStage, worker, i18n confessional, settings timezone, tests `tests/impact/`, configs (vitest/tsconfig/package).
+- **Takeout real del usuario:** **parsea ✓** (bug HTML de Fase 1 resuelto el 2026-09-22 noche)
+- **Última actualización:** 2026-09-22 (motor de impacto + parser HTML de actividad Takeout)
+- **Salud:** tests 72/72 ✓ · typecheck ✓ · lint ✓ · build producción ✓ · `electron-builder --dir` ✓
+- **Prueba manual Fase 1:** la app arranca con `npm run dev` ✓. Mock data importó pero dashboard sin verificar del todo. Takeout real del usuario (`~/Documents/google-personal-data/brankitis/`, 3 zips: 12.4GB YouTube/Gmail + 9.6MB actividad + 944MB Gmail) → smoke test en proceso main: `source: google`, **128.825 entidades** (~46.5k search + ~81.7k youtube) en ~7s. **Pendiente:** prueba visual con `npm run dev` + dashboard/confesionario.
+- **Cambios sin commitear:** `src/impact/`, ConfessionalMode/CardStage, worker, i18n confessional, settings timezone, tests `tests/impact/`, configs (vitest/tsconfig/package) + **parser HTML** (`src/parsers/htmlActivity.ts`, adapter, ImportValidate, i18n import, fixtures/tests HTML).
 
 ## Decisiones tomadas
 
@@ -43,6 +44,12 @@
 | 2026-09-22 | Timezone en onboarding + persistencia `settings.json` vía IPC/FileStore | Horarios nocturnos/laborales en hora local del usuario |
 | 2026-09-22 | Share payload redactado (`buildSharePayload`): sin términos de búsqueda ni timestamps crudos | Cero contenido sensible en tarjetas para compartir |
 | 2026-09-22 | Tests UI con happy-dom + `@testing-library/react` (`.test.tsx`) | Verificar blur/reveal sin Electron |
+| 2026-09-22 | **Takeout moderno exporta actividad en HTML** (`MiActividad.html`, `historial de reproducciones.html`), no JSON | Diagnóstico con los zips reales del usuario; el parser solo miraba `.json` → `source: unknown` engañoso |
+| 2026-09-22 | Parser HTML de actividad: celdas `outer-cell`, sniff 256KB (CSS Google ~141KB > `HEAD_SNIFF_BYTES`), streaming por marcador | `src/parsers/htmlActivity.ts`; fechas ES/EN + `a.m./p.m.` + `GMT±HH:MM` (incl. U+202F) |
+| 2026-09-22 | YouTube HTML solo si header contiene `youtube` **o** hay link `watch?v=` | Evita falsos positivos de "Has visto" en Publicidad/Gmail |
+| 2026-09-22 | HTML no-actividad → skip **silencioso** (no entra a cobertura) | Takeout real trae cientos de HTML de juegos/ayuda; no inundar UI |
+| 2026-09-22 | Fallo `source==='unknown'`: conservar el `ParseReport` y mostrar cobertura + `filesScanned` (máx. 50 omitidas) | Mensaje "no es Takeout" era engañoso y descartaba el diagnóstico (`store.ts`) |
+| 2026-09-22 | **Ubicaciones ausentes en Takeout 2026 del usuario**: no hay `Records.json` ni Semantic (Timeline solo en dispositivo) | Sección vacía en dashboard = esperado, no inventar datos |
 
 ## To-Dos Fase 1 (completada)
 
@@ -56,7 +63,9 @@
 - [x] Dashboard: mapa, timeline, contadores, dato incómodo
 - [x] Módulo limpieza: deep links, disclaimers, checklist persistente
 - [x] Suite verde: test + typecheck + lint + build
+- [x] **Parser HTML de actividad** (Takeout moderno ES/EN) + UX de fallo con cobertura real
 - [ ] **Aprobación del usuario para cerrar Fase 1**
+- [ ] **Prueba visual con Takeout real** (`npm run dev`, dashboard + confesionario)
 
 ## Fase Impacto — Motor + Confesionario (implementada, sin commitear)
 
@@ -88,23 +97,40 @@
 
 **No implementado aún (era del prompt):** blur por defecto en contenido sensible con “click para revelar” (solo blur pre-reveal universal); opción global “excluir categorías sensibles”; auto-reveal ~800ms (hoy manual); pin Leaflet / número grande en último reveal; tarjeta PNG de resumen; línea de implicancia “qué actor podría usar esto” (hoy solo niveles genéricos); test de título de ventana / logs.
 
-### FASE C — Tests (vitest) — **60/60 verdes**
+### FASE C — Tests (vitest) — **72/72 verdes**
 
 - [x] Fixtures sintéticos: casa/trabajo/secundario 120 días, hits ES/EN, spike inyectado
 - [x] Test por regla: casa/trabajo, streak, léxico ES/EN, spike, correlación, orden de cartas, share payload limpio, blur/reveal UI
 - [x] Integración: progreso por etapas, determinismo, dataset vacío, settings timezone
+- [x] HTML activity: fechas ES/EN, celdas search/youtube, visitas omitidas, fixtures `takeout-html*.zip`, noise-only → unknown
+
+## Bug Takeout real (2026-09-22, resuelto)
+
+**Síntoma:** "Esto no parece un Takeout de Google" con los 3 zips del usuario (juntos, carpeta o sueltos).
+
+**Causa:** export moderno de Google trae `Takeout/Mi actividad/*/MiActividad.html` y `YouTube…/historial de *.html`; el adapter solo procesaba `.json` → `coverage.parsed = 0` → `source: 'unknown'` y el reporte se descartaba en `store.ts`. Los logs `GetVSyncParametersIfAvailable` eran ruido de GPU/Linux (ya catalogados).
+
+**Zips del usuario** (`~/Documents/google-personal-data/brankitis/`):
+- `…-2-001.zip` (12.4GB): YouTube HTML history + videos + CSV — historia en `.html` no `.json`
+- `…-3-001.zip` (9.6MB): `Mi actividad/**/MiActividad.html` (~33k celdas búsqueda) — sin `.json` de actividad
+- `…-4-001.zip` (944MB): solo Gmail `.mbox` — sin secciones soportadas
+- **Sin** `Location History/` ni Semantic (Google no exporta Timeline a la nube)
+
+**Fix:** `htmlActivity.ts` + adapter acepta `.html` (sniff 256KB + streaming `outer-cell`) + store conserva reporte en fallo + i18n `helpNoZips`/`scanned`/`moreSkipped` + fixtures/tests. Smoke con zips reales: 128.825 entidades, ~7s, suite 72/72.
 
 ## Pendiente conocido (no bloquea)
 
-- **Verificar visualmente el dashboard con mock data** (usuario no quedó seguro de los resultados) y luego con su Takeout real cuando llegue.
+- **Prueba visual con Takeout real** en `npm run dev`: dashboard (búsquedas/YouTube) + confesionario; confirmar contadores y que ubicaciones aparezcan vacías (esperado).
+- Verificar visualmente el dashboard con mock data (usuario no quedó seguro de los resultados).
 - `npm audit` reporta vulnerabilidades en cadena de devDeps (electron-builder). No afectan la app empaquetada. Revisar antes de release público.
 - Iconos de la app (electron-builder usa el default). Crear `build/icon.*`.
 - `stream-json` v1.9 + `@types/stream-json` v1.7 (v3 existe pero sin tipos compatibles). Evaluar migración.
 
 ## Cerrar Fase Impacto (commitear)
 
-- [ ] Commit de los cambios actuales (motor + confesionario + tests + configs)
+- [ ] Commit de los cambios actuales (motor + confesionario + tests + configs + **parser HTML Takeout**)
 - [ ] `npm run build` + prueba manual con mock data: CTA confesionario, reveal, share
+- [ ] Prueba manual con Takeout real del usuario (import → dashboard → confesionario)
 - [ ] Opcional post-commit: excluir sensibles, tarjeta PNG, auto-reveal 800ms, pin mapa, implicancia por actor
 
 ## Fase 2 (no iniciada — requiere aprobación de Fase 1)
@@ -127,6 +153,6 @@
 ```bash
 npm run dev     # desarrollo
 npm run mock    # regenerar mock-takeout/ (datos falsos ES, 2 zips)
-npm run test    # 60 tests
+npm run test    # 72 tests
 npm run dist    # instaladores
 ```

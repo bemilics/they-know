@@ -79,6 +79,41 @@ describe('GoogleTakeoutAdapter', () => {
     expect(report.filesScanned).toBeGreaterThan(0)
   })
 
+  it('parses Spanish activity exported as HTML', async () => {
+    const report = await adapter.parse([path.join(fixtures, 'takeout-html.zip')])
+    expect(report.source).toBe('google')
+
+    const searches = report.entities.filter((e) => e.tipo === 'search')
+    expect(searches.map((s) => s.titulo)).toEqual(
+      expect.arrayContaining(['cómo dormir mejor', 'síntomas de ansiedad'])
+    )
+    expect(searches.some((s) => s.titulo.includes('Google Maps'))).toBe(false)
+
+    const youtube = report.entities.filter((e) => e.tipo === 'youtube')
+    expect(youtube).toHaveLength(2)
+    expect(youtube[0].titulo).toBe('Cómo dejar de procrastinar')
+    expect(youtube[0].detalle).toBe('Canal Motivacional')
+
+    const htmlParsed = report.coverage.parsed.filter((p) => p.kind === 'activity-html')
+    expect(htmlParsed).toHaveLength(2)
+  })
+
+  it('parses English activity HTML', async () => {
+    const report = await adapter.parse([path.join(fixtures, 'takeout-html-en.zip')])
+    expect(report.source).toBe('google')
+    const searches = report.entities.filter((e) => e.tipo === 'search')
+    expect(searches.map((s) => s.titulo)).toContain('divorce lawyer near me')
+    expect(searches[0].timestamp).toBe('2024-01-15T10:45:00.000Z')
+  })
+
+  it('reports unknown with filesScanned when HTML is not activity', async () => {
+    const report = await adapter.parse([path.join(fixtures, 'takeout-html-noise-only.zip')])
+    expect(report.source).toBe('unknown')
+    expect(report.entities).toHaveLength(0)
+    expect(report.filesScanned).toBeGreaterThan(0)
+    expect(report.coverage.parsed).toHaveLength(0)
+  })
+
   it('handles nonexistent paths without throwing', async () => {
     const report = await adapter.parse(['/does/not/exist.zip'])
     expect(report.source).toBe('unknown')

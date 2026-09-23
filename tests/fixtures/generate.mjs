@@ -120,6 +120,57 @@ const enRecords = JSON.stringify({
 
 const unknownJson = JSON.stringify({ foo: 'bar', nested: { a: [1, 2, 3] } })
 
+function activityHtml(cells) {
+  const body = cells
+    .map((cell) => {
+      return `<div class="outer-cell mdl-cell mdl-cell--12-col mdl-shadow--2dp"><div class="mdl-grid"><div class="header-cell mdl-cell mdl-cell--12-col"><p class="mdl-typography--title">${cell.header}<br></p></div><div class="content-cell mdl-cell mdl-cell--6-col mdl-typography--body-1">${cell.content}<br></div><div class="content-cell mdl-cell mdl-cell--6-col mdl-typography--body-1 mdl-typography--text-right"></div><div class="content-cell mdl-cell mdl-cell--12-col mdl-typography--caption"><b>Productos:</b><br>&emsp;${cell.header}<br><b>¿Por qué se grabó esta actividad?</b><br></div></div></div>`
+    })
+    .join('')
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>My Activity</title><style>/* ${'x'.repeat(2000)} material-design */</style></head><body><div class="mdl-grid">${body}</div></body></html>`
+}
+
+const htmlSearch = activityHtml([
+  {
+    header: 'Búsqueda',
+    content: 'Buscaste cómo dormir mejor<br>2 mar 2024, 4:12:33 a.m. GMT-03:00'
+  },
+  {
+    header: 'Búsqueda',
+    content: 'Visitaste Google Maps<br>6 mar 2024, 7:00:00 a.m. GMT-03:00'
+  },
+  {
+    header: 'Búsqueda',
+    content: 'Buscaste síntomas de ansiedad<br>5 mar 2024, 8:41:10 p.m. GMT-03:00'
+  }
+])
+
+const htmlYoutubeHistory = activityHtml([
+  {
+    header: 'YouTube',
+    content:
+      'Has visto <a href="https://www.youtube.com/watch?v=abc123">Cómo dejar de procrastinar</a><br><a href="https://www.youtube.com/channel/x">Canal Motivacional</a><br>3 mar 2024, 9:15:00 p.m. GMT-03:00'
+  },
+  {
+    header: 'YouTube',
+    content: 'Has visto Documental ansiedad social<br>4 mar 2024, 10:30:00 p.m. GMT-03:00'
+  }
+])
+
+const htmlEnSearch = activityHtml([
+  {
+    header: 'Search',
+    content: 'Searched for how to delete my data<br>15 Jan 2024, 10:45:00 a.m. GMT+00:00'
+  },
+  {
+    header: 'Search',
+    content: 'Searched for divorce lawyer near me<br>16 Jan 2024, 2:20:00 a.m. GMT+00:00'
+  }
+])
+
+const htmlNoise = `<!DOCTYPE html><html><head><style>.game{color:red}/* ${'y'.repeat(
+  3000
+)}</style></head><body><div class="score">Level 1</div></body></html>`
+
 await writeZip(path.join(here, 'takeout-es.zip'), {
   'Takeout/Mi actividad/Búsqueda/MiActividad.json': esSearch,
   'Takeout/YouTube y YouTube Music/historial/historial-de-reproducciones.json': esYoutube,
@@ -130,6 +181,22 @@ await writeZip(path.join(here, 'takeout-en.zip'), {
   'Takeout/My Activity/Search/MyActivity.json': enSearch,
   'Takeout/YouTube and YouTube Music/history/watch-history.json': enYoutube,
   'Takeout/Location History/Records.json': enRecords
+})
+
+await writeZip(path.join(here, 'takeout-html.zip'), {
+  'Takeout/Mi actividad/Búsqueda/MiActividad.html': htmlSearch,
+  'Takeout/YouTube y YouTube Music/historial de videos/historial de reproducciones.html':
+    htmlYoutubeHistory,
+  'Takeout/Juegos Actividad.html': htmlNoise
+})
+
+await writeZip(path.join(here, 'takeout-html-en.zip'), {
+  'Takeout/My Activity/Search/MyActivity.html': htmlEnSearch
+})
+
+await writeZip(path.join(here, 'takeout-html-noise-only.zip'), {
+  'Takeout/Gemini/gems.html': htmlNoise,
+  'readme.txt': 'not a takeout'
 })
 
 await writeZip(path.join(here, 'takeout-multi', 'takeout-001.zip'), {

@@ -42,6 +42,13 @@
         "Si elegiste una carpeta, revisa que los .zip estén dentro.",
         "Si el problema sigue, vuelve a takeout.google.com y crea una exportación nueva en formato .zip."
       ],
+      "helpNoZips": [
+        "No encontré archivos .zip en lo que elegiste.",
+        "Si elegiste una carpeta, revisa que los .zip estén directamente dentro (no en una subcarpeta).",
+        "También puedes elegir varios .zip a la vez con el otro botón."
+      ],
+      "scanned": "Archivos escaneados en tu selección: {{count}}",
+      "moreSkipped": "…y {{count}} omitidas más",
       "retry": "Intentar con otros archivos"
     },
     "coverage": {

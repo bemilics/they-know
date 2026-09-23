@@ -42,6 +42,13 @@
         "If you picked a folder, check that the .zip files are inside it.",
         "If the problem persists, go back to takeout.google.com and create a new export in .zip format."
       ],
+      "helpNoZips": [
+        "I couldn't find any .zip files in what you picked.",
+        "If you picked a folder, check that the .zip files are directly inside it (not in a subfolder).",
+        "You can also pick several .zip files at once with the other button."
+      ],
+      "scanned": "Files scanned in your selection: {{count}}",
+      "moreSkipped": "…and {{count}} more skipped",
       "retry": "Try with other files"
     },
     "coverage": {
