@@ -1,13 +1,78 @@
 import { StringDecoder } from 'node:string_decoder'
 import type { Readable } from 'node:stream'
 import type { NormalizedEntity } from '../shared/types'
-import { stripKnownPrefix } from './normalize'
 
 const CELL_MARKER = '<div class="outer-cell'
 
-const SEARCH_PREFIXES = ['buscaste ', 'searched for ']
-const VISIT_PREFIXES = ['visitaste ', 'visited ']
-const WATCH_PREFIXES = ['has visto ', 'watched ', 'viste ', 'miraste ']
+// Prefijos sin espacio final: el matching exige límite de palabra (fin de
+// línea o espacio), así que "Empezaste a comprar<br>Kimi" también calza.
+const SEARCH_PREFIXES = ['buscaste', 'searched for']
+const VISIT_PREFIXES = ['visitaste', 'has visitado', 'visited']
+const WATCH_PREFIXES = ['has visto', 'watched', 'viste', 'miraste']
+const DIRECTIONS_PREFIXES = ['indicaciones a', 'directions to', 'got directions to']
+const USED_PREFIXES = ['se ha utilizado', 'used', 'se ha llamado', 'called']
+const PURCHASE_START_PREFIXES = ['empezaste a comprar', 'started purchasing']
+
+/** Ruido transversal: sincronización y notificaciones, sin historia. */
+const NOISE_PREFIXES = [
+  'se ha recibido',
+  'has recibido',
+  'received a',
+  'has received',
+  'dispositivo conectado',
+  'device connected',
+  'se ha actualizado la información de uso',
+  'usage information has been updated'
+]
+
+/** Ruido dentro de celdas con header de Maps (zonas exploradas, timeline, etc.). */
+const MAPS_NOISE_PREFIXES = [
+  'explorado en',
+  'explored',
+  'se ha visualizado',
+  'viewed',
+  'visto',
+  'notificación'
+]
+
+const NOTIFICATION_RE = /^(\d+\s*)?(notificaci|notification)/
+
+/** El store mismo como "destino de visita" no es dato, es ruido. */
+const PLAY_STORE_SELF_TITLES = ['google play', 'google play store', 'play store']
+
+/** El verbo calza si termina en límite de palabra: fin de línea o espacio. */
+function matchesVerb(lower: string, prefix: string): boolean {
+  if (!lower.startsWith(prefix)) return false
+  const next = lower.charAt(prefix.length)
+  return next === '' || next === ' '
+}
+
+function stripVerb(title: string, prefixes: string[]): string {
+  const lower = title.toLowerCase()
+  for (const p of prefixes) {
+    if (matchesVerb(lower, p)) return title.slice(p.length).trim()
+  }
+  return ''
+}
+
+function hasVerb(lower: string, prefixes: string[]): boolean {
+  return prefixes.some((p) => matchesVerb(lower, p))
+}
+
+/**
+ * Cuando el verbo va solo en su línea ("Indicaciones a<br>Destino<br>…"),
+ * el título está en la línea siguiente. Omit fechas, marcadores de ubicación
+ * y notificaciones: no son títulos.
+ */
+function titleFromNextLines(lines: string[]): string {
+  for (const line of lines.slice(1)) {
+    if (parseTakeoutHtmlDate(line)) continue
+    if (/^(ubicación actual|current location)$/i.test(line)) continue
+    if (NOTIFICATION_RE.test(line.toLowerCase())) continue
+    return line
+  }
+  return ''
+}
 
 const MONTHS: Record<string, number> = {
   jan: 0,
@@ -75,6 +140,7 @@ function htmlToPlain(html: string): string {
   const tagsStripped = withBreaks.replace(/<[^>]+>/g, '')
   return normalizeSpaces(decodeEntities(tagsStripped))
 }
+
 
 export function looksLikeActivityHtml(head: string): boolean {
   if (!head.includes(CELL_MARKER) && !head.includes('outer-cell')) return false
@@ -156,17 +222,64 @@ export function parseActivityCell(cellHtml: string): NormalizedEntity | null {
   const first = lines[0]
   const lower = first.toLowerCase()
   const isYoutubeHeader = header.includes('youtube')
+  const headerMaps = header.includes('maps')
+  const headerPlay = header.includes('play')
 
-  if (VISIT_PREFIXES.some((p) => lower.startsWith(p))) return null
+  const product = headerMaps ? 'maps' : headerPlay ? 'play-store' : undefined
 
-  if (SEARCH_PREFIXES.some((p) => lower.startsWith(p))) {
-    const titulo = stripKnownPrefix(first, SEARCH_PREFIXES)
+  if (NOTIFICATION_RE.test(lower)) return null
+  if (hasVerb(lower, NOISE_PREFIXES)) return null
+  if (headerMaps && hasVerb(lower, MAPS_NOISE_PREFIXES)) return null
+
+  if (hasVerb(lower, SEARCH_PREFIXES)) {
+    const titulo = stripVerb(first, SEARCH_PREFIXES) || titleFromNextLines(lines)
     if (!titulo) return null
-    return { tipo: 'search', timestamp, titulo, ...(watchUrl ? { detalle: watchUrl } : {}) }
+    return {
+      tipo: 'search',
+      timestamp,
+      titulo,
+      ...(product ? { product } : {}),
+      ...(watchUrl ? { detalle: watchUrl } : {})
+    }
   }
 
-  if (WATCH_PREFIXES.some((p) => lower.startsWith(p)) && (isYoutubeHeader || watchUrl)) {
-    const titulo = stripKnownPrefix(first, WATCH_PREFIXES)
+  if (hasVerb(lower, DIRECTIONS_PREFIXES)) {
+    const titulo = stripVerb(first, DIRECTIONS_PREFIXES) || titleFromNextLines(lines)
+    if (!titulo) return null
+    return { tipo: 'maps', timestamp, titulo, product: 'maps' }
+  }
+
+  if (hasVerb(lower, USED_PREFIXES)) {
+    const titulo =
+      stripVerb(first, USED_PREFIXES) ||
+      titleFromNextLines(lines) ||
+      (PLAY_STORE_SELF_TITLES.includes(header) ? '' : header)
+    if (!titulo) return null
+    return { tipo: 'app', timestamp, titulo, product: product ?? 'play-store' }
+  }
+
+  if (hasVerb(lower, PURCHASE_START_PREFIXES)) {
+    const titulo =
+      stripVerb(first, PURCHASE_START_PREFIXES) ||
+      titleFromNextLines(lines) ||
+      (PLAY_STORE_SELF_TITLES.includes(header) ? '' : header)
+    if (!titulo) return null
+    return { tipo: 'purchase', timestamp, titulo, product: 'play-store' }
+  }
+
+  if (hasVerb(lower, VISIT_PREFIXES)) {
+    if (headerPlay) {
+      const titulo = (stripVerb(first, VISIT_PREFIXES) || titleFromNextLines(lines)).trim()
+      const norm = titulo.toLowerCase()
+      if (!norm || PLAY_STORE_SELF_TITLES.includes(norm)) return null
+      return { tipo: 'app', timestamp, titulo, product: 'play-store' }
+    }
+    // Visitas genéricas (ej. "Visitaste Google Maps" en Búsqueda) siguen omitidas.
+    return null
+  }
+
+  if (hasVerb(lower, WATCH_PREFIXES) && (isYoutubeHeader || watchUrl)) {
+    const titulo = stripVerb(first, WATCH_PREFIXES) || titleFromNextLines(lines)
     if (!titulo) return null
     const channel = channelHtml ? htmlToPlain(channelHtml).trim() : undefined
     return {
@@ -175,6 +288,13 @@ export function parseActivityCell(cellHtml: string): NormalizedEntity | null {
       titulo,
       ...(channel ? { detalle: channel } : {})
     }
+  }
+
+  // Lugares vistos en Maps: celda con header Maps sin verbo reconocido = nombre del lugar.
+  if (headerMaps) {
+    const titulo = first.trim()
+    if (!titulo) return null
+    return { tipo: 'maps', timestamp, titulo, product: 'maps' }
   }
 
   return null

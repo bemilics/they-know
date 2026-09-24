@@ -47,7 +47,9 @@ export function computeSpikes(
   entities: NormalizedEntity[],
   timezone: string
 ): Spike[] {
-  const textEntities = entities.filter((e) => e.tipo === 'search' || e.tipo === 'youtube')
+  const textEntities = entities.filter(
+    (e) => e.tipo === 'search' || e.tipo === 'youtube' || e.tipo === 'maps'
+  )
   if (textEntities.length < 20) return []
 
   const spikes: Spike[] = []
@@ -125,7 +127,7 @@ export function representativeMoment(
 ): { timestamp: string; titulo: string } | null {
   const terms = categoryTerms.map((t) => normalize(t))
   const hits = entities.filter((e) => {
-    if (e.tipo !== 'search' && e.tipo !== 'youtube') return false
+    if (e.tipo !== 'search' && e.tipo !== 'youtube' && e.tipo !== 'maps') return false
     const hay = normalize(`${e.titulo} ${e.detalle ?? ''}`)
     return terms.some((t) => t && hay.includes(t))
   })

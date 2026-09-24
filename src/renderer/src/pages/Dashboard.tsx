@@ -6,6 +6,7 @@ import LocationMap from '../components/LocationMap'
 import Timeline from '../components/Timeline'
 import UncomfortableFact from '../components/UncomfortableFact'
 import { computeAggregates } from '../lib/aggregates'
+import { summarizeSkipped } from '../lib/coverage'
 import { useAppStore, type CleanupSection } from '../state/store'
 
 export default function Dashboard(): React.JSX.Element | null {
@@ -29,6 +30,16 @@ export default function Dashboard(): React.JSX.Element | null {
     { id: 'search', count: agg.counts.search },
     { id: 'youtube', count: agg.counts.youtube }
   ]
+
+  const playMaps = [
+    { key: 'maps', count: agg.counts.maps },
+    { key: 'app', count: agg.counts.app },
+    { key: 'purchase', count: agg.counts.purchase },
+    { key: 'review', count: agg.counts.review }
+  ]
+  const hasPlayMapsData = playMaps.some((c) => c.count > 0)
+  const skippedSummary = summarizeSkipped(snapshot?.coverage.skipped ?? [])
+  const skippedDetailed = skippedSummary.detailed.slice(0, 50)
 
   return (
     <div>
@@ -61,14 +72,34 @@ export default function Dashboard(): React.JSX.Element | null {
               {t('dashboard:cleanupCta')}
             </button>
           </div>
-          {section.count === 0 ? (
+          {section.count === 0 && !(section.id === 'location' && agg.mapPoints > 0) ? (
             <p className="note">{t('dashboard:counters.empty')}</p>
           ) : null}
-          {section.id === 'location' && section.count > 0 ? (
-            <LocationMap entities={snapshot.entities} />
-          ) : null}
+          {section.id === 'location' ? <LocationMap entities={snapshot.entities} /> : null}
         </div>
       ))}
+
+      {hasPlayMapsData ? (
+        <div className="section-card">
+          <div className="section-head">
+            <div>
+              <h2>{t('dashboard:newSections.title')}</h2>
+              <p className="lead">{t('dashboard:newSections.description')}</p>
+            </div>
+          </div>
+          <div className="big-counters">
+            {playMaps.map(
+              (c) =>
+                c.count > 0 && (
+                  <div className="counter" key={c.key}>
+                    <div className="number">{c.count.toLocaleString()}</div>
+                    <div className="label">{t(`dashboard:newSections.${c.key}`)}</div>
+                  </div>
+                )
+            )}
+          </div>
+        </div>
+      ) : null}
 
       <div className="section-card">
         <div className="section-head">
@@ -99,14 +130,28 @@ export default function Dashboard(): React.JSX.Element | null {
       {snapshot.coverage.skipped.length > 0 ? (
         <div className="card">
           <h2>{t('dashboard:coverage.title')}</h2>
-          <div className="coverage-list">
-            {snapshot.coverage.skipped.map((s, i) => (
-              <div key={i}>
-                <code>{s.path}</code> —{' '}
-                {t(`dashboard:coverage.skippedReasons.${s.reason}`, s.reason)}
-              </div>
-            ))}
-          </div>
+          {skippedDetailed.length > 0 ? (
+            <div className="coverage-list">
+              {skippedDetailed.map((s, i) => (
+                <div key={i}>
+                  <code>{s.path}</code> —{' '}
+                  {t(`dashboard:coverage.skippedReasons.${s.reason}`, s.reason)}
+                </div>
+              ))}
+              {skippedSummary.detailed.length > skippedDetailed.length ? (
+                <div>
+                  {t('dashboard:coverage.moreSkipped', {
+                    count: skippedSummary.detailed.length - skippedDetailed.length
+                  })}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+          {skippedSummary.emptyCount > 0 ? (
+            <p className="note">
+              {t('dashboard:coverage.emptySummary', { count: skippedSummary.emptyCount })}
+            </p>
+          ) : null}
         </div>
       ) : null}
 

@@ -23,12 +23,22 @@
       "description": "Lo que has visto, según tu historial."
     }
   },
+  "newSections": {
+    "title": "Play Store y Maps",
+    "description": "Lo que tus datos dejan ver sobre tus apps, tus compras y tus reseñas.",
+    "maps": "lugares y rutas consultados en Maps",
+    "app": "registros de uso de aplicaciones",
+    "purchase": "compras y suscripciones",
+    "review": "reseñas publicadas en Maps"
+  },
   "uncomfortable": {
     "title": "El dato más incómodo",
     "nightSearches": "{{count}} de tus búsquedas fueron entre medianoche y las 5 AM. Google sabe qué te quita el sueño.",
     "oldestRecord": "Google guarda actividad tuya desde hace {{years}} años.",
     "locationSpan": "Tu ubicación quedó registrada en {{count}} días distintos.",
-    "videos": "Google registró {{count}} videos que viste."
+    "videos": "Google registró {{count}} videos que viste.",
+    "appEvents": "Play Store registró {{count}} usos de tus aplicaciones.",
+    "purchases": "Google guardó {{count}} compras o suscripciones en tu cuenta."
   },
   "map": {
     "note": "Las imágenes del mapa vienen de OpenStreetMap: es lo único que esta app descarga de internet. Tus ubicaciones nunca salen del computador."
@@ -43,8 +53,11 @@
       "unsupported-section": "sección no soportada",
       "unknown-format": "formato no reconocido",
       "parse-error": "archivo dañado",
-      "non-json": "no es JSON"
-    }
+      "non-json": "no es JSON",
+      "empty": "archivo vacío (sin datos)"
+    },
+    "emptySummary": "{{count}} archivos vacíos o sin actividad (normal en un Takeout).",
+    "moreSkipped": "…y {{count}} omitidas más"
   },
   "cleanupCta": "¿Cómo borro esto?",
   "confessional": {

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { summarizeSkipped } from '../lib/coverage'
 import { useAppStore } from '../state/store'
 
 export default function ImportValidate(): React.JSX.Element {
@@ -29,8 +30,9 @@ export default function ImportValidate(): React.JSX.Element {
     const help = t(helpKey, {
       returnObjects: true
     }) as unknown as string[]
-    const skipped = report?.coverage.skipped.slice(0, 50) ?? []
-    const skippedHidden = (report?.coverage.skipped.length ?? 0) - skipped.length
+    const summary = summarizeSkipped(report?.coverage.skipped ?? [])
+    const skipped = summary.detailed.slice(0, 50)
+    const skippedHidden = summary.detailed.length - skipped.length
     return (
       <div className="error-card">
         <h2>{t('onboarding:import.notTakeout.title')}</h2>
@@ -58,6 +60,11 @@ export default function ImportValidate(): React.JSX.Element {
             </div>
           </>
         ) : null}
+        {summary.emptyCount > 0 ? (
+          <p className="note">
+            {t('dashboard:coverage.emptySummary', { count: summary.emptyCount })}
+          </p>
+        ) : null}
         <div className="actions-row">
           <button className="secondary" onClick={() => setPhase('welcome')}>
             {t('common:back')}
@@ -71,6 +78,9 @@ export default function ImportValidate(): React.JSX.Element {
   }
 
   if (importReport) {
+    const summary = summarizeSkipped(importReport.coverage.skipped)
+    const skipped = summary.detailed.slice(0, 50)
+    const skippedHidden = summary.detailed.length - skipped.length
     return (
       <div>
         <h1>{t('onboarding:import.coverage.title')}</h1>
@@ -78,25 +88,26 @@ export default function ImportValidate(): React.JSX.Element {
           {t('onboarding:import.coverage.parsed', { count: importReport.coverage.parsed.length })}{' '}
           · {t('onboarding:import.coverage.skipped', { count: importReport.coverage.skipped.length })}
         </p>
-        {importReport.coverage.skipped.length > 0 ? (
+        {skipped.length > 0 ? (
           <>
             <p className="note">{t('onboarding:import.coverage.skippedNote')}</p>
             <div className="coverage-list">
-              {importReport.coverage.skipped.slice(0, 50).map((s, i) => (
+              {skipped.map((s, i) => (
                 <div key={i}>
                   <code>{s.path}</code> —{' '}
                   {t(`dashboard:coverage.skippedReasons.${s.reason}`, s.reason)}
                 </div>
               ))}
-              {importReport.coverage.skipped.length > 50 ? (
-                <div>
-                  {t('onboarding:import.notTakeout.moreSkipped', {
-                    count: importReport.coverage.skipped.length - 50
-                  })}
-                </div>
+              {skippedHidden > 0 ? (
+                <div>{t('onboarding:import.notTakeout.moreSkipped', { count: skippedHidden })}</div>
               ) : null}
             </div>
           </>
+        ) : null}
+        {summary.emptyCount > 0 ? (
+          <p className="note">
+            {t('dashboard:coverage.emptySummary', { count: summary.emptyCount })}
+          </p>
         ) : null}
         <div className="actions-row">
           <button className="secondary" onClick={() => retryImport()}>

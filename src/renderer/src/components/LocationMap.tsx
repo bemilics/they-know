@@ -4,7 +4,7 @@ import { CircleMarker, MapContainer, TileLayer, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { NormalizedEntity } from '../../../shared/types'
-import { locationsWithCoords, samplePoints } from '../lib/aggregates'
+import { pointsWithCoords, samplePoints } from '../lib/aggregates'
 
 const MAX_POINTS = 3000
 
@@ -27,7 +27,7 @@ export default function LocationMap({
 }): React.JSX.Element | null {
   const { t } = useTranslation('dashboard')
   const points = useMemo(() => {
-    const withCoords = samplePoints(locationsWithCoords(entities), MAX_POINTS)
+    const withCoords = samplePoints(pointsWithCoords(entities), MAX_POINTS)
     return withCoords.map((e) => [e.lat as number, e.lng as number] as [number, number])
   }, [entities])
 

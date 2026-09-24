@@ -5,7 +5,7 @@ import type {
   ParseReport,
   SkipReason
 } from '../../shared/types'
-import { classifyJsonText, classifyJsonValue, classifyMyActivityItem } from '../detect'
+import { classifyJsonText, classifyJsonValue, classifyMyActivityItem, isEmptyJson } from '../detect'
 import { looksLikeActivityHtml, parseActivityHtmlStream } from '../htmlActivity'
 import { readHead, streamObjectKeyArray, streamRootArray } from '../jsonStream'
 import {
@@ -16,6 +16,8 @@ import {
 } from '../types'
 import { openZipEntries, resolveZipPaths } from '../zipStream'
 import { parseLocationRecordItem, parseSemanticLocationItem } from './locations'
+import { parseMapsReviewFeature } from './mapsReviews'
+import { parsePlayStoreItem } from './playStore'
 import { parseSearchItem } from './searchHistory'
 import { parseYoutubeItem } from './youtubeHistory'
 
@@ -24,6 +26,8 @@ export class GoogleTakeoutAdapter {
     const zipPaths = await resolveZipPaths(inputs)
     const entities: NormalizedEntity[] = []
     const coverage: CoverageReport = { parsed: [], skipped: [] }
+    // Compras vistas (timestamp): Order History y Purchase History se solapan.
+    const seenPurchases = new Set<string>()
     let filesScanned = 0
 
     for (const zipPath of zipPaths) {
@@ -44,9 +48,16 @@ export class GoogleTakeoutAdapter {
         }
         try {
           if (lower.endsWith('.json')) {
-            await this.parseEntry(entry.path, entry.uncompressedSize, io, entities, coverage)
+            await this.parseEntry(
+              entry.path,
+              entry.uncompressedSize,
+              io,
+              entities,
+              coverage,
+              seenPurchases
+            )
           } else if (lower.endsWith('.html')) {
-            await this.parseHtmlEntry(entry.path, io, entities, coverage)
+            await this.parseHtmlEntry(entry.path, io, entities, coverage, seenPurchases)
           }
         } catch {
           coverage.skipped.push({ path: entry.path, reason: 'parse-error' })
@@ -67,7 +78,8 @@ export class GoogleTakeoutAdapter {
     size: number,
     io: { buffer: () => Promise<Buffer>; stream: () => Readable },
     entities: NormalizedEntity[],
-    coverage: CoverageReport
+    coverage: CoverageReport,
+    seenPurchases: Set<string>
   ): Promise<void> {
     let kind: SectionKind | null
 
@@ -81,13 +93,14 @@ export class GoogleTakeoutAdapter {
       let records = 0
       const onItem = (item: unknown): void => {
         const entity = this.itemToEntity(kind as SectionKind, item)
-        if (entity) {
-          entities.push(entity)
+        if (entity && this.pushEntity(entities, seenPurchases, entity)) {
           records++
         }
       }
       if (kind === 'location-records') {
         await streamObjectKeyArray(io.stream(), 'locations', onItem)
+      } else if (kind === 'maps-reviews') {
+        await streamObjectKeyArray(io.stream(), 'features', onItem)
       } else {
         await streamRootArray(io.stream(), onItem)
       }
@@ -96,23 +109,32 @@ export class GoogleTakeoutAdapter {
     }
 
     const buffer = await io.buffer()
-    const json: unknown = JSON.parse(buffer.toString('utf8'))
+    const text = buffer.toString('utf8').trim()
+    if (text === '') {
+      this.skip(coverage, path, 'empty')
+      return
+    }
+    const json: unknown = JSON.parse(text)
     kind = classifyJsonValue(json)
     if (!kind) {
-      this.skip(coverage, path, 'unknown-format')
+      this.skip(coverage, path, isEmptyJson(json) ? 'empty' : 'unknown-format')
       return
     }
 
     let records = 0
-    const items = kind === 'location-records' ? (json as { locations?: unknown[] }).locations : json
+    const items =
+      kind === 'location-records'
+        ? (json as { locations?: unknown[] }).locations
+        : kind === 'maps-reviews'
+          ? (json as { features?: unknown[] }).features
+          : json
     if (!Array.isArray(items)) {
       this.skip(coverage, path, 'unknown-format')
       return
     }
     for (const item of items) {
       const entity = this.itemToEntity(kind, item)
-      if (entity) {
-        entities.push(entity)
+      if (entity && this.pushEntity(entities, seenPurchases, entity)) {
         records++
       }
     }
@@ -123,16 +145,35 @@ export class GoogleTakeoutAdapter {
     path: string,
     io: { stream: () => Readable },
     entities: NormalizedEntity[],
-    coverage: CoverageReport
+    coverage: CoverageReport,
+    seenPurchases: Set<string>
   ): Promise<void> {
     const head = await readHead(io.stream, ACTIVITY_HTML_SNIFF_BYTES)
     if (!looksLikeActivityHtml(head)) return
     let records = 0
     await parseActivityHtmlStream(io.stream(), (entity) => {
-      entities.push(entity)
-      records++
+      if (this.pushEntity(entities, seenPurchases, entity)) records++
     })
     coverage.parsed.push({ path, kind: 'activity-html', records })
+  }
+
+  /**
+   * Guarda la entidad; devuelve false si es una compra JSON ya vista
+   * (mismo timestamp). Order History y Purchase History registran el mismo
+   * evento. Solo aplica a JSON con `detalle`: los eventos HTML de actividad
+   * tienen precisión de segundo (.000) y colisionarían entre sí.
+   */
+  private pushEntity(
+    entities: NormalizedEntity[],
+    seenPurchases: Set<string>,
+    entity: NormalizedEntity
+  ): boolean {
+    if (entity.tipo === 'purchase' && entity.detalle !== undefined) {
+      if (seenPurchases.has(entity.timestamp)) return false
+      seenPurchases.add(entity.timestamp)
+    }
+    entities.push(entity)
+    return true
   }
 
   private itemToEntity(kind: SectionKind, item: unknown): NormalizedEntity | null {
@@ -143,6 +184,10 @@ export class GoogleTakeoutAdapter {
         return parseSemanticLocationItem(item)
       case 'location-records':
         return parseLocationRecordItem(item)
+      case 'maps-reviews':
+        return parseMapsReviewFeature(item)
+      case 'play-store':
+        return parsePlayStoreItem(item)
       case 'my-activity': {
         const section = classifyMyActivityItem(rec)
         if (section === 'search') return parseSearchItem(rec)

@@ -15,7 +15,17 @@ export interface SharePayload {
   meta: { cartas: number; entidades: number }
 }
 
-const SENSITIVE_KEYS = new Set(['busqueda', 'titulo', 'detalle', 'matches', 'query'])
+const SENSITIVE_KEYS = new Set([
+  'busqueda',
+  'titulo',
+  'detalle',
+  'matches',
+  'query',
+  'aplicacion',
+  'ejemplo',
+  'producto',
+  'lugar'
+])
 
 function redactValue(v: unknown): string {
   void v

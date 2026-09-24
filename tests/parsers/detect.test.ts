@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest'
 import {
   classifyJsonText,
   classifyJsonValue,
-  classifyMyActivityItem
+  classifyMyActivityItem,
+  isEmptyJson
 } from '../../src/parsers/detect'
 
 describe('classifyJsonValue', () => {
@@ -23,6 +24,31 @@ describe('classifyJsonValue', () => {
     expect(classifyJsonValue([])).toBeNull()
     expect(classifyJsonValue('str')).toBeNull()
   })
+  it('detects maps reviews GeoJSON', () => {
+    expect(classifyJsonValue({ type: 'FeatureCollection', features: [] })).toBe('maps-reviews')
+    expect(
+      classifyJsonValue({ type: 'FeatureCollection', features: [{ type: 'Feature' }] })
+    ).toBe('maps-reviews')
+    expect(classifyJsonValue({ type: 'Feature', geometry: {} })).toBeNull()
+  })
+  it('detects play store wrapper arrays', () => {
+    expect(classifyJsonValue([{ install: {} }])).toBe('play-store')
+    expect(classifyJsonValue([{ libraryDoc: {} }])).toBe('play-store')
+    expect(classifyJsonValue([{ purchaseHistory: {} }])).toBe('play-store')
+    expect(classifyJsonValue([{ subscription: {} }])).toBe('play-store')
+    expect(classifyJsonValue([{ orderHistory: {} }])).toBe('play-store')
+    expect(classifyJsonValue([{ device: {} }])).toBe('play-store')
+    expect(classifyJsonValue([{ userSetting: {} }])).toBe('play-store')
+  })
+  it('classifies empty json as empty, not unknown', () => {
+    expect(isEmptyJson([])).toBe(true)
+    expect(isEmptyJson({})).toBe(true)
+    expect(isEmptyJson({ answers: [], questions: [], replies: [], thumbs_ups: [] })).toBe(true)
+    expect(isEmptyJson([{ install: {} }])).toBe(false)
+    expect(isEmptyJson({ foo: 1 })).toBe(false)
+    expect(isEmptyJson({ answers: [1] })).toBe(false)
+    expect(isEmptyJson(null)).toBe(false)
+  })
 })
 
 describe('classifyJsonText', () => {
@@ -33,6 +59,11 @@ describe('classifyJsonText', () => {
       'my-activity'
     )
     expect(classifyJsonText('{"a": 1}')).toBeNull()
+  })
+  it('detects maps reviews and play store from head text', () => {
+    expect(classifyJsonText('{"type": "FeatureCollection", "features": [')).toBe('maps-reviews')
+    expect(classifyJsonText('[{"purchaseHistory": {"purchaseTime": "2024')).toBe('play-store')
+    expect(classifyJsonText('[{"install": {"doc":')).toBe('play-store')
   })
 })
 

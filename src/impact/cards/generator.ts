@@ -4,6 +4,8 @@ import { inferPlaces, inferStreaks, inferNightCoverage } from '../infer/places'
 import { matchLexicon, cardsFromLexicon, lexiconVersion } from '../infer/searchLexicon'
 import { computeSpikes, cardsFromSpikes } from '../infer/spikes'
 import { findCoProximal, cardsFromCorrelations } from '../infer/correlations'
+import { inferPurchases } from '../infer/purchases'
+import { inferAppCards } from '../infer/appUsage'
 
 export type ProgressFn = (p: ImpactProgress) => void
 
@@ -25,11 +27,15 @@ const CARD_WEIGHT: Record<string, number> = {
   spike_trabajo: 25,
   spike_salud: 25,
   spike_viajes: 25,
-  spike_compras: 25
+  spike_compras: 25,
+  purchase_total: 30,
+  app_top: 20,
+  app_night: 30
 }
 
 function weight(card: Card): number {
   if (card.id.startsWith('correlacion_')) return 45
+  if (card.id.startsWith('purchase_')) return 40
   return CARD_WEIGHT[card.id] ?? 20
 }
 
@@ -75,8 +81,18 @@ export function runImpact(
   const events = findCoProximal(entities, places, config.timezone)
   const corrCards = cardsFromCorrelations(events)
 
+  const purchaseCards = inferPurchases(entities, config.timezone)
+  const appCards = inferAppCards(entities, config.timezone)
+
   report('cards', 4, 4)
-  const all = sortCards([...placeCardsAll, ...lexCards, ...spikeCards, ...corrCards])
+  const all = sortCards([
+    ...placeCardsAll,
+    ...lexCards,
+    ...spikeCards,
+    ...corrCards,
+    ...purchaseCards,
+    ...appCards
+  ])
 
   // filtrado de privacidad: nada de títulos de búsqueda en datos_rellenables de share-safe fields
   const result: ImpactResult = {

@@ -1,10 +1,12 @@
-export type EntityType = 'location' | 'search' | 'youtube'
+export type EntityType = 'location' | 'search' | 'youtube' | 'maps' | 'app' | 'purchase' | 'review'
 
 export interface NormalizedEntity {
   tipo: EntityType
   timestamp: string
   titulo: string
   detalle?: string
+  /** Origen del dato: 'maps', 'play-store', nombre del producto, etc. */
+  product?: string
   lat?: number
   lng?: number
 }
@@ -22,6 +24,7 @@ export type SkipReason =
   | 'unknown-format'
   | 'parse-error'
   | 'non-json'
+  | 'empty'
 
 export interface SkippedEntry {
   path: string

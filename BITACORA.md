@@ -7,11 +7,13 @@
 
 - **Fase:** 1 (MVP) — **COMPLETA** (pendiente aprobación del usuario)
 - **Fase Impacto (motor + confesionario):** A/B/C **implementadas, sin commitear** (apagón antes del commit)
-- **Takeout real del usuario:** **parsea ✓** (bug HTML de Fase 1 resuelto el 2026-09-22 noche)
-- **Última actualización:** 2026-09-22 (motor de impacto + parser HTML de actividad Takeout)
-- **Salud:** tests 72/72 ✓ · typecheck ✓ · lint ✓ · build producción ✓ · `electron-builder --dir` ✓
-- **Prueba manual Fase 1:** la app arranca con `npm run dev` ✓. Mock data importó pero dashboard sin verificar del todo. Takeout real del usuario (`~/Documents/google-personal-data/brankitis/`, 3 zips: 12.4GB YouTube/Gmail + 9.6MB actividad + 944MB Gmail) → smoke test en proceso main: `source: google`, **128.825 entidades** (~46.5k search + ~81.7k youtube) en ~7s. **Pendiente:** prueba visual con `npm run dev` + dashboard/confesionario.
-- **Cambios sin commitear:** `src/impact/`, ConfessionalMode/CardStage, worker, i18n confessional, settings timezone, tests `tests/impact/`, configs (vitest/tsconfig/package) + **parser HTML** (`src/parsers/htmlActivity.ts`, adapter, ImportValidate, i18n import, fixtures/tests HTML).
+- **Fase Maps + Play Store:** **COMPLETA** (2026-09-24) — ingestión + cartas de impacto, sin commitear
+- **Takeout real del usuario:** **parsea ✓** (bug HTML resuelto 2026-09-22; Maps/Play Store resuelto 2026-09-24)
+- **Última actualización:** 2026-09-24 (soporte Maps + Play Store: parsers, cartas, UI, fixtures, 95/95)
+- **Salud:** tests 95/95 ✓ · typecheck ✓ · lint ✓ · build producción ✓ · `electron-builder --dir` ✓
+- **Prueba manual:** usuario confirmó con Takeout real: **"a simple vista funcionó"** (2026-09-24) ✓. Pendiente revisar el confesionario a fondo con datos reales.
+- **Smoke real (3 zips del usuario):** **161.926 entidades** en ~4s (antes 128.825): youtube 81.677 · search 46.522 · **app 32.126** · **maps 1.382** · **purchase 217** · **review 2**. Secciones leídas: 40 (31 activity-html + 7 play-store + 2 maps-reviews). Omitidas: 63 = 15 `empty` + 48 `unknown-format` (Chrome, Encuestas, Perfil, Tareas, Finance, Home…). Impacto: 17 cartas, i18n completo.
+- **Cambios sin commitear:** `src/impact/`, ConfessionalMode/CardStage, worker, i18n confessional, settings timezone, tests `tests/impact/`, configs (vitest/tsconfig/package) + **parser HTML** (`src/parsers/htmlActivity.ts`, adapter, ImportValidate, i18n import, fixtures/tests HTML) + **Maps/Play Store** (`src/parsers/google/{playStore,mapsReviews}.ts`, `detect.ts` con `orderHistory`/`isEmptyJson`, cascada HTML, `src/impact/infer/{purchases,appUsage}.ts`, Dashboard/ImportValidate/aggregates/LocationMap/coverage, i18n dashboard+confessional, fixture `takeout-maps-play.zip`, tests).
 
 ## Decisiones tomadas
 
@@ -50,6 +52,13 @@
 | 2026-09-22 | HTML no-actividad → skip **silencioso** (no entra a cobertura) | Takeout real trae cientos de HTML de juegos/ayuda; no inundar UI |
 | 2026-09-22 | Fallo `source==='unknown'`: conservar el `ParseReport` y mostrar cobertura + `filesScanned` (máx. 50 omitidas) | Mensaje "no es Takeout" era engañoso y descartaba el diagnóstico (`store.ts`) |
 | 2026-09-22 | **Ubicaciones ausentes en Takeout 2026 del usuario**: no hay `Records.json` ni Semantic (Timeline solo en dispositivo) | Sección vacía en dashboard = esperado, no inventar datos |
+| 2026-09-24 | **Alcance Maps/Play:** "ingestión + cartas de impacto"; tipos de entidad **nuevos** (`maps`, `app`, `purchase`, `review`), no reutilizar existentes (decisión del usuario) | Limpio por trazabilidad en el motor de impacto |
+| 2026-09-24 | Reseñas de Maps con **texto completo**: lugar + rating + fecha + texto (decisión del usuario) | El texto de la reseña es el dato incómodo |
+| 2026-09-24 | `SkipReason 'empty'`: `[]`, `{}` y objetos con solo arrays vacíos → "vacío", nunca "formato no reconocido" | Distinguir "Google no exportó nada" de "no lo entendemos" |
+| 2026-09-24 | `Order History.json` (wrapper `orderHistory`) → `purchase`; **dedup de compras por timestamp solo en JSON con `detalle`** | Order History solapa 91/99 con Purchase History; el HTML de actividad tiene precisión de segundo (`.000`) y se entrechocaba |
+| 2026-09-24 | Prefijos de verbo HTML con **límite de palabra** + fallback a la línea siguiente (omite fechas/"Ubicación actual") | Medido en celdas reales: `Empezaste a comprar<br>Kimi` y `Buscaste<br>Título` se caían con espacio fijo |
+| 2026-09-24 | Visitas web genéricas (header = dominio en `Chrome/` y `Publicidad/MiActividad.html`, 13.601 celdas) siguen **omitidas** | Historial de navegación queda como candidato de tipo `web` (fuera de alcance de esta fase) |
+| 2026-09-24 | Pesos cartas nuevas: `purchase_*=40`, `app_night=30`, `app_top=20`; todas las etapas `x,4` | Ídem regla de pesos por tipo de carta |
 
 ## To-Dos Fase 1 (completada)
 
@@ -65,7 +74,7 @@
 - [x] Suite verde: test + typecheck + lint + build
 - [x] **Parser HTML de actividad** (Takeout moderno ES/EN) + UX de fallo con cobertura real
 - [ ] **Aprobación del usuario para cerrar Fase 1**
-- [ ] **Prueba visual con Takeout real** (`npm run dev`, dashboard + confesionario)
+- [x] **Prueba visual con Takeout real** (`npm run dev`) — usuario: "a simple vista funcionó" (2026-09-24)
 
 ## Fase Impacto — Motor + Confesionario (implementada, sin commitear)
 
@@ -118,9 +127,46 @@
 
 **Fix:** `htmlActivity.ts` + adapter acepta `.html` (sniff 256KB + streaming `outer-cell`) + store conserva reporte en fallo + i18n `helpNoZips`/`scanned`/`moreSkipped` + fixtures/tests. Smoke con zips reales: 128.825 entidades, ~7s, suite 72/72.
 
+## Fase Maps + Play Store (2026-09-24, completa, sin commitear)
+
+Contexto: 72 secciones se omitían como "formato no reconocido"; el usuario priorizó Maps y Play Store con alcance "ingestión + cartas de impacto".
+
+### Ingestión
+
+- [x] `SkipReason 'empty'` + `isEmptyJson` (también objetos con solo arrays vacíos) en `detect.ts`
+- [x] Detección por **contenido**: GeoJSON `FeatureCollection` → `maps-reviews`; wrappers Play `install/libraryDoc/purchaseHistory/subscription/orderHistory/device/userSetting` → `play-store` (con espacios duros ` ` en rutas, ya tolerado por zipStream)
+- [x] `src/parsers/google/mapsReviews.ts`: reseñas → `tipo:'review'`, coords `[lng,lat]` invertidas, detalle `rating★ — texto`
+- [x] `src/parsers/google/playStore.ts`: installs → `app`; libraryDoc subs → `purchase`; purchaseHistory/subscriptions → `purchase` con detalle `purchase|subscription|order|library · precio · método/estado`; `device`/`userSetting` leídos con records 0
+- [x] Cascada HTML de actividad (medida celda por celda contra los zips reales): `Indicaciones a` → `maps`; `Se ha utilizado`/`llamado` → `app`; `Empezaste a comprar` → `purchase`; `Buscaste` en header Maps/Play → `search` con `product`; visitas de tienda misma y ruido Maps (`explorado en`, `se ha visualizado`…) → omitidos; lugar sin verbo + header Maps → `maps`
+- [x] Streaming preservado (>8MB en streaming, sniff 256KB HTML)
+
+### Impacto + UI
+
+- [x] Léxico/spikes/representativeMoment consideran `tipo==='maps'`; `matchCategory` exportado
+- [x] `infer/purchases.ts`: `purchase_total/night/<categoría>/activeSubs` (nivel `hecho`); `infer/appUsage.ts`: `app_top` (≥10), `app_night` (≥20, noche local)
+- [x] Copy i18n es-CL/en: compras y apps; el copy de `app_night` aclara que Play sincroniza en lotes (hora aproximada)
+- [x] Share payload redacta `aplicacion/ejemplo/producto/lugar`
+- [x] Dashboard: tarjeta de secciones nuevas (sin CTA de limpieza), mapa incluye reseñas (`mapPoints`), cobertura agrupada (`summarizeSkipped`, `emptySummary`); ImportValidate agrupa omitidas
+
+### Tests — **95/95 verdes** (antes 72)
+
+- [x] `detect`: GeoJSON, wrappers Play incl. `orderHistory`, `isEmptyJson` (arrays vacíos)
+- [x] `htmlActivity`: describe "Maps y Play Store" (8 tests: indicaciones, lugar sin verbo, búsqueda con product, used, llamada, empezaste, ruido, tienda)
+- [x] `google.test`: fixture `takeout-maps-play.zip` (ruta con NBSP) — app=4, purchase=6 (dedup GPA↔PH verificado), maps=2, search=2, review=1, skipped=3 todas `empty`
+- [x] `engine.test`: léxico maps, cartas compras/apps, redacción share
+- [x] `npm run test` + `typecheck` + `lint` + `build` ✓
+
+### Verificación cruzada (datos reales)
+
+- Compras: conteo independiente en Python = **130 timestamps JSON únicos + 87 HTML = 217** = exacto lo que dio el parser.
+- Celda por celda con el parser TS: `buscaste` 37.679/0 null · `indicaciones` 530/530 · `empezaste` 87/87 · `utilizado` 30.677/0.
+- Correcciones halladas en el camino: (1) prefijos con espacio final perdían celdas `<br>`; (2) dedup de compras colisionaba eventos HTML mismo-segundo (10 recuperadas); (3) estado de suscripción tomaba el último cambio leído, no el más reciente.
+
 ## Pendiente conocido (no bloquea)
 
-- **Prueba visual con Takeout real** en `npm run dev`: dashboard (búsquedas/YouTube) + confesionario; confirmar contadores y que ubicaciones aparezcan vacías (esperado).
+- **Candidato tipo `web` (fuera de alcance actual):** historial de navegación real — `Chrome/Historial.json` (578KB, `Browser History`) + **13.601 celdas `Has visitado`** con header=dominio en `Chrome/MiActividad.html` y `Publicidad/MiActividad.html` (también clics de publicidad). Sensibilísimo; requeriría tipo nuevo + cartas + redacción en share.
+- Resto de `unknown-format` (48 en el Takeout real): Encuestas HaTS (18), Blogger (6), Perfil, Tareas (1 lista), Google Finance, App de Home, Rutas/Settings, Maps auto-Q&A (2, sin timestamp), Chrome config.
+- **Prueba visual del confesionario con Takeout real**: dashboard confirmado "a simple vista" (2026-09-24), confesionario sin revisar a fondo.
 - Verificar visualmente el dashboard con mock data (usuario no quedó seguro de los resultados).
 - `npm audit` reporta vulnerabilidades en cadena de devDeps (electron-builder). No afectan la app empaquetada. Revisar antes de release público.
 - Iconos de la app (electron-builder usa el default). Crear `build/icon.*`.
@@ -128,9 +174,9 @@
 
 ## Cerrar Fase Impacto (commitear)
 
-- [ ] Commit de los cambios actuales (motor + confesionario + tests + configs + **parser HTML Takeout**)
+- [ ] Commit de los cambios actuales (motor + confesionario + tests + configs + parser HTML Takeout + **fase Maps/Play Store**)
 - [ ] `npm run build` + prueba manual con mock data: CTA confesionario, reveal, share
-- [ ] Prueba manual con Takeout real del usuario (import → dashboard → confesionario)
+- [ ] Prueba manual con Takeout real: confesionario (dashboard ya visto: "a simple vista funcionó", 2026-09-24)
 - [ ] Opcional post-commit: excluir sensibles, tarjeta PNG, auto-reveal 800ms, pin mapa, implicancia por actor
 
 ## Fase 2 (no iniciada — requiere aprobación de Fase 1)
@@ -153,6 +199,6 @@
 ```bash
 npm run dev     # desarrollo
 npm run mock    # regenerar mock-takeout/ (datos falsos ES, 2 zips)
-npm run test    # 72 tests
+npm run test    # 95 tests
 npm run dist    # instaladores
 ```

@@ -21,6 +21,22 @@ export function youtube(titulo: string, timestamp: string): NormalizedEntity {
   return { tipo: 'youtube', timestamp, titulo }
 }
 
+export function mapsEntity(titulo: string, timestamp: string): NormalizedEntity {
+  return { tipo: 'maps', timestamp, titulo, product: 'maps' }
+}
+
+export function app(titulo: string, timestamp: string): NormalizedEntity {
+  return { tipo: 'app', timestamp, titulo, product: 'play-store', detalle: 'install' }
+}
+
+export function purchase(
+  titulo: string,
+  timestamp: string,
+  detalle = 'purchase · CLP 7,890 · Entel'
+): NormalizedEntity {
+  return { tipo: 'purchase', timestamp, titulo, product: 'play-store', detalle }
+}
+
 /** Offset horario Santiago aproximado (CLT UTC-3 / CLST UTC-4) simple por mes. */
 export function santiagoIso(
   year: number,

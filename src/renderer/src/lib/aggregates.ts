@@ -10,6 +10,7 @@ export interface Aggregates {
   counts: Record<EntityType, number>
   locationPoints: number
   locationDays: number
+  mapPoints: number
   oldestTimestamp: string | null
   oldestYear: number | null
   nightSearches: number
@@ -17,7 +18,15 @@ export interface Aggregates {
 }
 
 export function computeAggregates(entities: NormalizedEntity[]): Aggregates {
-  const counts: Record<EntityType, number> = { location: 0, search: 0, youtube: 0 }
+  const counts: Record<EntityType, number> = {
+    location: 0,
+    search: 0,
+    youtube: 0,
+    maps: 0,
+    app: 0,
+    purchase: 0,
+    review: 0
+  }
   const locationDates = new Set<string>()
   let locationPoints = 0
   let nightSearches = 0
@@ -59,6 +68,7 @@ export function computeAggregates(entities: NormalizedEntity[]): Aggregates {
     counts,
     locationPoints,
     locationDays: locationDates.size,
+    mapPoints: pointsWithCoords(entities).length,
     oldestTimestamp: oldest ? oldest.toISOString() : null,
     oldestYear: oldest ? oldest.getFullYear() : null,
     nightSearches,
@@ -66,9 +76,13 @@ export function computeAggregates(entities: NormalizedEntity[]): Aggregates {
   }
 }
 
-export function locationsWithCoords(entities: NormalizedEntity[]): NormalizedEntity[] {
+/** Puntos con coordenadas para el mapa: ubicaciones del historial + reseñas de Maps. */
+export function pointsWithCoords(entities: NormalizedEntity[]): NormalizedEntity[] {
   return entities.filter(
-    (e) => e.tipo === 'location' && typeof e.lat === 'number' && typeof e.lng === 'number'
+    (e) =>
+      (e.tipo === 'location' || e.tipo === 'review') &&
+      typeof e.lat === 'number' &&
+      typeof e.lng === 'number'
   )
 }
 

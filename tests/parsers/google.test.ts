@@ -6,6 +6,7 @@ import { ZipFile } from 'yazl'
 import { afterAll, describe, expect, it } from 'vitest'
 import { GoogleTakeoutAdapter } from '../../src/parsers/google/GoogleTakeoutAdapter'
 import { BIG_FILE_THRESHOLD } from '../../src/parsers/types'
+import type { NormalizedEntity } from '../../src/shared/types'
 
 const fixtures = path.dirname(fileURLToPath(import.meta.url)).replace(/parsers$/, 'fixtures')
 
@@ -118,6 +119,58 @@ describe('GoogleTakeoutAdapter', () => {
     const report = await adapter.parse(['/does/not/exist.zip'])
     expect(report.source).toBe('unknown')
     expect(report.entities).toHaveLength(0)
+  })
+
+  describe('Maps y Play Store (takeout moderno)', () => {
+    const byTipo = (report: { entities: NormalizedEntity[] }, tipo: NormalizedEntity['tipo']) =>
+      report.entities.filter((e) => e.tipo === tipo)
+
+    it('parsea reseñas GeoJSON, JSON de Play Store y HTML de Maps/Play', async () => {
+      const report = await adapter.parse([path.join(fixtures, 'takeout-maps-play.zip')])
+      expect(report.source).toBe('google')
+
+      // Reseñas de Maps: lugar, rating, texto y coordenadas ([lng, lat] invertido)
+      const reviews = byTipo(report, 'review')
+      expect(reviews).toHaveLength(1)
+      expect(reviews[0].titulo).toBe('BOTILLERIA CLEBER ( DRINKS 24/7)')
+      expect(reviews[0].lat).toBeCloseTo(-33.4351858)
+      expect(reviews[0].lng).toBeCloseTo(-70.6163155)
+      expect(reviews[0].detalle).toContain('5★')
+      expect(reviews[0].detalle).toContain('muy buena atención')
+
+      // Play Store: installs + biblioteca (app) + compras + suscripciones + HTML
+      // + Order History (la orden GPA se deduplica por timestamp, la SOP suma)
+      expect(byTipo(report, 'app')).toHaveLength(4)
+      expect(byTipo(report, 'purchase')).toHaveLength(6)
+      expect(byTipo(report, 'maps')).toHaveLength(2)
+      expect(byTipo(report, 'search')).toHaveLength(2)
+
+      const subs = byTipo(report, 'purchase').filter((e) =>
+        e.detalle?.startsWith('subscription')
+      )
+      expect(subs).toHaveLength(3)
+    })
+
+    it('reporta cobertura: formatos soportados leídos, vacíos como empty', async () => {
+      const report = await adapter.parse([path.join(fixtures, 'takeout-maps-play.zip')])
+
+      const parsedPaths = report.coverage.parsed.map((p) => p.path)
+      expect(parsedPaths.some((p) => p.includes('Opiniones'))).toBe(true)
+      expect(parsedPaths.some((p) => p.includes('Installs'))).toBe(true)
+      expect(parsedPaths.some((p) => p.includes('Subscriptions'))).toBe(true)
+      expect(parsedPaths.some((p) => p.includes('Order History'))).toBe(true)
+
+      // Devices/Play Settings: reconocidos pero sin historia → leídos con 0 registros
+      const devices = report.coverage.parsed.find((p) => p.path.includes('Devices'))
+      expect(devices).toMatchObject({ kind: 'play-store', records: 0 })
+
+      // JSON vacíos (incl. objeto con solo arrays vacíos) → 'empty', nunca formato desconocido
+      expect(report.coverage.skipped.length).toBe(3)
+      expect(report.coverage.skipped.every((s) => s.reason === 'empty')).toBe(true)
+      expect(report.coverage.skipped.some((s) => s.path.includes('Empty.json'))).toBe(true)
+      expect(report.coverage.skipped.some((s) => s.path.includes('ALERTS'))).toBe(true)
+      expect(report.coverage.skipped.some((s) => s.path.includes('eléctricos'))).toBe(true)
+    })
   })
 
   describe('big files (streaming)', () => {

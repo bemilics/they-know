@@ -171,6 +171,173 @@ const htmlNoise = `<!DOCTYPE html><html><head><style>.game{color:red}/* ${'y'.re
   3000
 )}</style></head><body><div class="score">Level 1</div></body></html>`
 
+const mapsGeoReviews = JSON.stringify({
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [-70.6163155, -33.4351858] },
+      properties: {
+        date: '2025-06-09T22:40:15.242989Z',
+        five_star_rating_published: 5,
+        google_maps_url: 'https://www.google.com/maps/place/x',
+        location: {
+          address: 'Manuel Montt 780, 7500000 Providencia, Región Metropolitana, Chile',
+          country_code: 'CL',
+          name: 'BOTILLERIA CLEBER ( DRINKS 24/7)'
+        },
+        review_text_published: 'muy buena atención'
+      }
+    },
+    {
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [-70.601516, -33.4155468] },
+      properties: {
+        five_star_rating_published: 1,
+        location: { name: 'israel embassy' }
+      }
+    }
+  ]
+})
+
+const playInstalls = JSON.stringify([
+  {
+    install: {
+      doc: { documentType: 'Android Apps', title: 'Immich' },
+      firstInstallationTime: '2026-05-31T02:32:23.271567Z',
+      deviceAttribute: { deviceDisplayName: 'samsung SM-S921B' }
+    }
+  }
+])
+
+const playPurchases = JSON.stringify([
+  {
+    purchaseHistory: {
+      invoicePrice: 'CLP 7,890',
+      paymentMethodTitle: 'Entel',
+      doc: { documentType: 'Subscription', title: '1 Week Hinge+ Membership (Hinge)' },
+      purchaseTime: '2026-08-24T00:27:33.515Z'
+    }
+  }
+])
+
+const playSubscriptions = JSON.stringify([
+  {
+    subscription: {
+      doc: { documentType: 'Subscription', title: 'HBO Max 1 Month Standard Plan' },
+      pricing: [{ period: { unit: 'MONTH', count: 1 }, price: 'CLP 7,990', repeatedPricing: true }],
+      userChangeRecord: [{ date: '2023-11-27T00:10:29.847Z', type: 'Cancel' }],
+      state: 'Canceled'
+    }
+  },
+  {
+    subscription: {
+      doc: { documentType: 'Subscription', title: 'LIONSGATE+ Monthly' },
+      pricing: [{ period: { unit: 'MONTH', count: 1 }, price: 'CLP 5,990', repeatedPricing: true }],
+      userChangeRecord: [{ date: '2023-06-25T23:46:43.265Z', type: 'Purchase' }],
+      state: 'Active'
+    }
+  }
+])
+
+const playLibrary = JSON.stringify([
+  {
+    libraryDoc: {
+      doc: { documentType: 'Subscription', title: 'Suscripción mensual a LIONSGATE+' },
+      acquisitionTime: '2024-02-01T12:00:00.000Z'
+    }
+  },
+  {
+    libraryDoc: {
+      doc: { documentType: 'Android Apps', title: 'Immich' },
+      acquisitionTime: '2024-01-10T10:00:00.000Z'
+    }
+  }
+])
+
+const playDevices = JSON.stringify([{ device: { mostRecentData: { modelName: 'SM-S921B' } } }])
+
+// La primera orden GPA repite el timestamp de Purchase History (dedup); la SOP es nueva.
+const playOrderHistory = JSON.stringify([
+  {
+    orderHistory: {
+      orderId: 'GPA.3385-4882-6618-64576',
+      creationTime: '2026-08-24T00:27:33.515Z',
+      billingInstrument: { displayName: 'Entel' },
+      totalPrice: 'CLP 7,890',
+      lineItem: [
+        {
+          doc: { documentType: 'Subscription', title: '1 Week Hinge+ Membership (Hinge)' },
+          quantity: '1'
+        }
+      ]
+    }
+  },
+  {
+    orderHistory: {
+      orderId: 'SOP.3381-8123-9447-46996..11',
+      creationTime: '2026-09-22T02:50:49.922Z',
+      billingInstrument: { displayName: 'Entel' },
+      totalPrice: '2.690 CLP',
+      lineItem: [
+        { doc: { documentType: 'Subscription', title: '200 GB (Google One)' }, quantity: '1' }
+      ]
+    }
+  }
+])
+
+// Objeto con solo arrays vacíos: sin datos → razón 'empty', no formato desconocido.
+const mapsEmptyConfig = JSON.stringify({ evChargeTriggers: [], notificationPreferences: [] })
+const playSettings = JSON.stringify([
+  { userSetting: { marketingPreferences: { wantsMultiContentEmail: true } } }
+])
+const emptyJson = '[]'
+
+const htmlMapsActivity = activityHtml([
+  {
+    header: 'Maps',
+    content:
+      'Indicaciones a <a href="https://www.google.cl/maps/dir//x">Crescente Errázuriz 2241, Ñuñoa</a><br>22 sept 2026, 3:55:17 p.m. GMT-03:00'
+  },
+  { header: 'Maps', content: 'Gimnasio Smart<br>22 sept 2026, 3:50:00 p.m. GMT-03:00' },
+  { header: 'Maps', content: 'Buscaste av. Providencia<br>22 sept 2026, 3:49:00 p.m. GMT-03:00' },
+  {
+    header: 'Maps',
+    content: 'Se ha visualizado una zona en Chile<br>22 sept 2026, 3:48:00 p.m. GMT-03:00'
+  },
+  { header: 'Maps', content: 'Visto Tu cronología<br>22 sept 2026, 3:47:00 p.m. GMT-03:00' },
+  { header: 'Maps', content: '1 notificación<br>Temas incluidos:<br>22 sept 2026, 3:46:00 p.m. GMT-03:00' }
+])
+
+const htmlPlayActivity = activityHtml([
+  {
+    header: 'WhatsApp Messenger',
+    content: 'Se ha utilizado WhatsApp Messenger<br>22 sept 2026, 1:06:40 a.m. GMT-03:00'
+  },
+  {
+    header: 'Google Play Store',
+    content:
+      'Dispositivo conectado<br>Se ha actualizado la información de uso de algunas aplicaciones<br>22 sept 2026, 5:06:55 a.m. GMT-03:00'
+  },
+  {
+    header: 'Google Play Store',
+    content:
+      'Has visitado <a href="https://play.google.com/">Tinder: app de citas</a><br>20 sept 2026, 1:09:10 a.m. GMT-03:00'
+  },
+  {
+    header: 'Google Play Store',
+    content: 'Has visitado Google Play<br>20 sept 2026, 1:07:48 a.m. GMT-03:00'
+  },
+  {
+    header: 'Google Play Store',
+    content: 'Empezaste a comprar HBO Max Plan<br>19 sept 2026, 8:00:00 p.m. GMT-03:00'
+  },
+  {
+    header: 'Google Play Store',
+    content: 'Buscaste uber eats<br>18 sept 2026, 7:00:00 p.m. GMT-03:00'
+  }
+])
+
 await writeZip(path.join(here, 'takeout-es.zip'), {
   'Takeout/Mi actividad/Búsqueda/MiActividad.json': esSearch,
   'Takeout/YouTube y YouTube Music/historial/historial-de-reproducciones.json': esYoutube,
@@ -214,6 +381,25 @@ await writeZip(path.join(here, 'broken.zip'), {
 await writeZip(path.join(here, 'not-a-takeout.zip'), {
   'readme.txt': 'hello world',
   'photos/cat.jpg': 'fakejpegbytes'
+})
+
+// Nota: los nombres reales de Takeout usan espacio duro (U+00A0) en "Google Play Store".
+const NBSP = '\u00A0'
+await writeZip(path.join(here, 'takeout-maps-play.zip'), {
+  'Takeout/Maps (tus lugares)/Opiniones.json': mapsGeoReviews,
+  [`Takeout/Google${NBSP}Play${NBSP}Store/Installs.json`]: playInstalls,
+  [`Takeout/Google${NBSP}Play${NBSP}Store/Purchase History.json`]: playPurchases,
+  [`Takeout/Google${NBSP}Play${NBSP}Store/Subscriptions.json`]: playSubscriptions,
+  [`Takeout/Google${NBSP}Play${NBSP}Store/Library.json`]: playLibrary,
+  [`Takeout/Google${NBSP}Play${NBSP}Store/Devices.json`]: playDevices,
+  [`Takeout/Google${NBSP}Play${NBSP}Store/Order History.json`]: playOrderHistory,
+  [`Takeout/Google${NBSP}Play${NBSP}Store/Play Settings.json`]: playSettings,
+  [`Takeout/Google${NBSP}Play${NBSP}Store/Empty.json`]: emptyJson,
+  'Takeout/Alertas/ALERTS-SUBSCRIPTIONS.JSON': emptyJson,
+  'Takeout/Maps/Configuración de vehículos eléctricos/Configuración de vehículos eléctricos.json':
+    mapsEmptyConfig,
+  'Takeout/Mi actividad/Maps/MiActividad.html': htmlMapsActivity,
+  'Takeout/Mi actividad/Google Play Store/MiActividad.html': htmlPlayActivity
 })
 
 console.log('fixtures generated')

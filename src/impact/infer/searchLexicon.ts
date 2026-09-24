@@ -37,10 +37,30 @@ export function lexiconVersion(): string {
   return lexicon.version
 }
 
+/** Tipos cuyo texto alimenta el léxico: búsquedas, YouTube y actividad de Maps. */
+const TEXT_TIPOS = new Set(['search', 'youtube', 'maps'])
+
+export interface LexiconMatch {
+  category: string
+  term: string
+}
+
+/** Matchea texto plano (compras, apps, etc.) contra el léxico. Primera coincidencia. */
+export function matchCategory(text: string): LexiconMatch | null {
+  const hay = normalize(text)
+  for (const cat of compiled) {
+    for (const term of cat.terms) {
+      if (term.norm === '') continue
+      if (hay.includes(term.norm)) return { category: cat.name, term: term.raw }
+    }
+  }
+  return null
+}
+
 export function matchLexicon(entities: NormalizedEntity[]): LexiconHit[] {
   const hits: LexiconHit[] = []
   for (const e of entities) {
-    if (e.tipo !== 'search' && e.tipo !== 'youtube') continue
+    if (!TEXT_TIPOS.has(e.tipo)) continue
     const hay = normalize(`${e.titulo} ${e.detalle ?? ''}`)
     for (const cat of compiled) {
       for (const term of cat.terms) {

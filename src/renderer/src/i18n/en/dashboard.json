@@ -23,12 +23,22 @@
       "description": "What you've watched, according to your history."
     }
   },
+  "newSections": {
+    "title": "Play Store and Maps",
+    "description": "What your data reveals about your apps, purchases and reviews.",
+    "maps": "places or directions looked up in Maps",
+    "app": "app usage records",
+    "purchase": "purchases and subscriptions",
+    "review": "reviews published on Maps"
+  },
   "uncomfortable": {
     "title": "The most uncomfortable fact",
     "nightSearches": "{{count}} of your searches happened between midnight and 5 AM. Google knows what keeps you up at night.",
     "oldestRecord": "Google has stored your activity for {{years}} years.",
     "locationSpan": "Your location was recorded on {{count}} different days.",
-    "videos": "Google recorded {{count}} videos you watched."
+    "videos": "Google recorded {{count}} videos you watched.",
+    "appEvents": "Play Store recorded {{count}} instances of your app usage.",
+    "purchases": "Google stored {{count}} purchases or subscriptions in your account."
   },
   "map": {
     "note": "Map images come from OpenStreetMap: it's the only thing this app downloads from the internet. Your locations never leave the computer."
@@ -43,8 +53,11 @@
       "unsupported-section": "unsupported section",
       "unknown-format": "unrecognized format",
       "parse-error": "damaged file",
-      "non-json": "not JSON"
-    }
+      "non-json": "not JSON",
+      "empty": "empty file (no data)"
+    },
+    "emptySummary": "{{count}} empty or activity-free files (normal in a Takeout).",
+    "moreSkipped": "…and {{count}} more skipped"
   },
   "cleanupCta": "How do I delete this?",
   "confessional": {

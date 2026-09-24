@@ -110,6 +110,34 @@
       "detalle": "En la semana {{semana}} miraste precios {{cantidad}} veces."
     }
   },
+  "purchases": {
+    "total": {
+      "titulo": "Tu historial de compras",
+      "detalle": "Play Store registró {{cantidad}} compras o suscripciones en tu cuenta."
+    },
+    "night": {
+      "titulo": "Compras a deshoras",
+      "detalle": "{{cantidad}} de esas compras ocurrieron entre las 10 PM y las 4 AM. La última: {{ejemplo}} ({{fecha}})."
+    },
+    "cat": {
+      "titulo": "Compras que delatan la categoría",
+      "detalle": "{{cantidad}} compras en Play Store delatan interés en «{{categoria}}». La más reciente: {{ejemplo}}."
+    },
+    "activeSubs": {
+      "titulo": "Suscripciones que siguen vivas",
+      "detalle": "{{cantidad}} suscripciones activas: unos {{total}} al mes según el registro de Play."
+    }
+  },
+  "apps": {
+    "top": {
+      "titulo": "La app que más aparece",
+      "detalle": "Play registró {{cantidad}} eventos de uso de {{aplicacion}}."
+    },
+    "night": {
+      "titulo": "El celular a deshoras",
+      "detalle": "{{cantidad}} registros de uso de apps caen entre las 10 PM y las 4 AM (Play sincroniza en bloques, así que la hora es aproximada)."
+    }
+  },
   "correlation": {
     "titulo": "Buscaste algo justo donde estabas",
     "detalle": "\"{{busqueda}}\" apareció {{ocurrencias}} veces junto a tu ubicación (±{{delta_minutos}} min).",

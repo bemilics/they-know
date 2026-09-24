@@ -1,7 +1,7 @@
 import type { Aggregates } from './aggregates'
 
 export interface UncomfortableFact {
-  key: 'nightSearches' | 'oldestRecord' | 'locationSpan' | 'videos'
+  key: 'nightSearches' | 'oldestRecord' | 'locationSpan' | 'videos' | 'appEvents' | 'purchases'
   score: number
   params: Record<string, number>
 }
@@ -32,6 +32,20 @@ export function pickUncomfortableFact(agg: Aggregates): UncomfortableFact | null
       key: 'videos',
       score: Math.min(agg.counts.youtube, 500),
       params: { count: agg.counts.youtube }
+    })
+  }
+  if (agg.counts.app > 0) {
+    candidates.push({
+      key: 'appEvents',
+      score: Math.min(agg.counts.app, 2500),
+      params: { count: agg.counts.app }
+    })
+  }
+  if (agg.counts.purchase > 0) {
+    candidates.push({
+      key: 'purchases',
+      score: agg.counts.purchase * 6,
+      params: { count: agg.counts.purchase }
     })
   }
 
